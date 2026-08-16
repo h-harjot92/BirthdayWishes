@@ -1,91 +1,910 @@
-:root{
-  --bg:#0b0b0b;
-  --red:#ff2b2b;
-  --dark-red:#a70000;
-  --muted:#bdbdbd;
-  --glass: rgba(255,255,255,0.04);
+/* =========================================
+   BASIC SETTINGS
+========================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
-.theme{background:linear-gradient(180deg,var(--bg) 0%, #070707 100%); color:#fff; display:flex; align-items:center; justify-content:center; padding:20px;}
-.container{width:min(980px,96%);}
 
-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-header h1{margin:0;color:var(--red);letter-spacing:1px}
+:root {
 
-.track{
-  position:relative;
-  background:linear-gradient(90deg,#121212 0%, #0a0a0a 100%);
-  border-radius:12px;
-  height:220px;
-  overflow:hidden;
-  border:2px solid rgba(255,0,0,0.06);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    --red: #ff1738;
+
+    --black: #030303;
+
+    --dark: #08090b;
+
+    --white: #f5f5f5;
+
+    --gray: #999;
+
 }
 
-.car{
-  position:absolute;
-  left:4%;
-  top:40%;
-  width:260px;
-  transform:translateX(0) scale(1);
-  transition:transform 0.25s linear;
-  will-change:transform;
+
+body {
+
+    background: var(--black);
+
+    color: var(--white);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    overflow: hidden;
+
 }
 
-.motion-lines{
-  position:absolute;
-  inset:0;
-  background-image:linear-gradient(transparent 0 50%, rgba(255,255,255,0.02) 50%),
-                    linear-gradient(90deg, rgba(0,0,0,0.35), rgba(0,0,0,0));
-  mix-blend-mode:overlay;
-  pointer-events:none;
-  opacity:0.6;
+
+/* =========================================
+   COMMON SCREEN
+========================================= */
+
+.screen {
+
+    width: 100vw;
+
+    height: 100vh;
+
+    min-height: 600px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+
+        radial-gradient(
+            circle at center,
+            rgba(255, 23, 56, 0.12),
+            transparent 40%
+        ),
+
+        linear-gradient(
+            #020202,
+            #090a0c
+        );
+
 }
 
-.controls{margin-top:16px;display:flex;gap:12px;align-items:center}
-.btn{background:var(--glass);border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:10px 14px;border-radius:8px;cursor:pointer;font-weight:600}
-.btn.primary{background:linear-gradient(90deg,var(--red),var(--dark-red)); color:white; border:none; box-shadow: 0 6px 20px rgba(167,0,0,0.18)}
 
-.overlay{
-  position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;
-}
-.overlay .birthday-msg{
-  background:linear-gradient(180deg, rgba(255,43,43,0.12), rgba(167,0,0,0.06));
-  border-radius:14px;
-  padding:28px 36px;
-  text-align:center;
-  backdrop-filter: blur(6px);
-  border:1px solid rgba(255,255,255,0.04);
-  box-shadow:0 10px 40px rgba(167,0,0,0.12);
-  pointer-events:auto;
-}
-.birthday-msg h2{margin:0;font-size:36px;color:#fff; text-shadow: 0 4px 18px rgba(167,0,0,0.45)}
-.birthday-msg .sparkles{font-size:28px;margin-bottom:8px}
+/* =========================================
+   HIDE / SHOW
+========================================= */
 
-.hidden{display:none !important}
+.hidden {
 
-.countdown{
-  margin-top:12px;
-  font-size:20px;
-  background:linear-gradient(90deg, rgba(0,0,0,0.35), rgba(0,0,0,0.2));
-  display:inline-block;
-  padding:8px 14px;
-  border-radius:8px;
-  border:1px solid rgba(255,255,255,0.04);
-  color:var(--muted);
+    display: none !important;
+
 }
 
-.final-msg{
-  margin-top:18px;
-  background:linear-gradient(90deg,#111, #0b0b0b);
-  padding:12px 14px;
-  border-radius:8px;
-  color:#ffd;
-  border:1px solid rgba(255,0,0,0.06);
-  text-align:center;
-  font-weight:700;
+
+/* =========================================
+   TEXT
+========================================= */
+
+.content {
+
+    text-align: center;
+
+    position: relative;
+
+    z-index: 10;
+
+    padding: 20px;
+
 }
 
-footer{margin-top:14px;color:var(--muted);font-size:13px}
+
+.small-title {
+
+    color: var(--red);
+
+    font-size: 11px;
+
+    letter-spacing: 5px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 20px;
+
+}
+
+
+h1 {
+
+    font-size:
+        clamp(40px, 10vw, 90px);
+
+    line-height: 0.9;
+
+    font-style: italic;
+
+    text-transform: uppercase;
+
+    font-weight: 900;
+
+}
+
+
+h1 span {
+
+    display: block;
+
+    color: var(--red);
+
+}
+
+
+.instruction {
+
+    color: #aaa;
+
+    font-size: 11px;
+
+    letter-spacing: 3px;
+
+    line-height: 2;
+
+    text-transform: uppercase;
+
+    margin: 25px 0;
+
+}
+
+
+/* =========================================
+   START ENGINE BUTTON
+========================================= */
+
+.engine-button {
+
+    width: 140px;
+
+    height: 140px;
+
+    border-radius: 50%;
+
+    border: 2px solid var(--red);
+
+    background: #070707;
+
+    color: white;
+
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+
+    box-shadow:
+
+        0 0 20px
+        rgba(255, 23, 56, 0.3),
+
+        0 0 0 8px
+        rgba(255, 23, 56, 0.05);
+
+    transition: 0.3s;
+
+}
+
+
+.engine-button:hover {
+
+    transform: scale(1.06);
+
+    box-shadow:
+
+        0 0 45px
+        rgba(255, 23, 56, 0.6);
+
+}
+
+
+.engine-button:active {
+
+    transform: scale(0.95);
+
+}
+
+
+/* =========================================
+   INTRO CAR
+========================================= */
+
+.car {
+
+    position: absolute;
+
+    bottom: 12%;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: min(650px, 80vw);
+
+    height: 100px;
+
+    background:
+
+        linear-gradient(
+            #333,
+            #050505
+        );
+
+    border-radius:
+        50% 50% 10% 10%;
+
+    border: 1px solid #555;
+
+    box-shadow:
+        0 30px 50px #000;
+
+}
+
+
+/* Car roof */
+
+.car::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 50%;
+
+    height: 70px;
+
+    left: 25%;
+
+    top: -55px;
+
+    background:
+        linear-gradient(
+            #222,
+            #050505
+        );
+
+    clip-path:
+        polygon(
+            20% 100%,
+            30% 0,
+            70% 0,
+            80% 100%
+        );
+
+}
+
+
+/* =========================================
+   HEADLIGHTS
+========================================= */
+
+.headlight {
+
+    position: absolute;
+
+    top: 25px;
+
+    width: 100px;
+
+    height: 12px;
+
+    background: white;
+
+    border-radius: 50%;
+
+    box-shadow:
+
+        0 0 20px 5px
+        rgba(200,230,255,0.8);
+
+}
+
+
+.headlight.left {
+    left: 8%;
+}
+
+
+.headlight.right {
+    right: 8%;
+}
+
+
+/* =========================================
+   WHEELS
+========================================= */
+
+.wheel {
+
+    position: absolute;
+
+    bottom: -25px;
+
+    width: 70px;
+
+    height: 70px;
+
+    background: #050505;
+
+    border-radius: 50%;
+
+    border: 10px solid #181818;
+
+    box-shadow:
+        inset 0 0 0 4px #444;
+
+}
+
+
+.wheel.left {
+    left: 12%;
+}
+
+
+.wheel.right {
+    right: 12%;
+}
+
+
+/* =========================================
+   RACING SCREEN
+========================================= */
+
+#raceScreen {
+
+    background:
+
+        linear-gradient(
+            #071019,
+            #020304
+        );
+
+}
+
+
+.speed {
+
+    position: absolute;
+
+    top: 25px;
+
+    right: 25px;
+
+    color: var(--red);
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    font-style: italic;
+
+}
+
+
+.race-message {
+
+    position: relative;
+
+    z-index: 10;
+
+    text-align: center;
+
+    font-size:
+        clamp(30px, 7vw, 70px);
+
+    font-weight: 900;
+
+    font-style: italic;
+
+    text-transform: uppercase;
+
+}
+
+
+.race-message span {
+
+    display: block;
+
+    color: var(--red);
+
+}
+
+
+/* =========================================
+   RACING CAR
+========================================= */
+
+.race-car {
+
+    position: absolute;
+
+    left: -300px;
+
+    bottom: 20%;
+
+    width: 260px;
+
+    height: 90px;
+
+    border-radius:
+        50% 45% 10% 10%;
+
+    background:
+        linear-gradient(
+            #333,
+            #050505
+        );
+
+    border: 1px solid #555;
+
+}
+
+
+.race-car::after {
+
+    content: "";
+
+    position: absolute;
+
+    right: 5%;
+
+    top: 30px;
+
+    width: 50px;
+
+    height: 8px;
+
+    background: var(--red);
+
+    box-shadow:
+        0 0 20px 5px
+        rgba(255, 23, 56, 0.6);
+
+}
+
+
+/* Race animation */
+
+#raceScreen:not(.hidden)
+.race-car {
+
+    animation:
+
+        driveCar
+        3.5s
+        linear
+        forwards;
+
+}
+
+
+@keyframes driveCar {
+
+    from {
+
+        left: -300px;
+
+        transform: scale(0.7);
+
+    }
+
+    to {
+
+        left: 110%;
+
+        transform: scale(1.2);
+
+    }
+
+}
+
+
+/* =========================================
+   BIRTHDAY SCREEN
+========================================= */
+
+#birthdayScreen {
+
+    background:
+
+        radial-gradient(
+            circle at center,
+            rgba(255,23,56,0.16),
+            transparent 35%
+        ),
+
+        #030303;
+
+}
+
+
+.birthday-content {
+
+    position: relative;
+
+    z-index: 10;
+
+    text-align: center;
+
+    max-width: 800px;
+
+    padding: 25px;
+
+}
+
+
+.birthday-content h2 {
+
+    font-size:
+        clamp(50px, 12vw, 110px);
+
+    line-height: 0.85;
+
+    font-style: italic;
+
+    font-weight: 900;
+
+    margin: 20px 0;
+
+}
+
+
+.birthday-content h2 span {
+
+    color: var(--red);
+
+}
+
+
+.birthday-message {
+
+    max-width: 650px;
+
+    margin: auto;
+
+    color: #d0d0d0;
+
+    line-height: 1.8;
+
+    font-size: 16px;
+
+}
+
+
+.champion {
+
+    margin-top: 25px;
+
+    font-size: 26px;
+
+    font-style: italic;
+
+}
+
+
+/* =========================================
+   COUNTDOWN
+========================================= */
+
+.timer {
+
+    margin-top: 35px;
+
+    color: var(--red);
+
+    font-size: 30px;
+
+    font-weight: bold;
+
+    letter-spacing: 3px;
+
+}
+
+
+.timer-text {
+
+    color: #777;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+    text-transform: uppercase;
+
+    margin-top: 5px;
+
+}
+
+
+/* =========================================
+   CONFETTI
+========================================= */
+
+.confetti {
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+}
+
+
+.confetti-piece {
+
+    position: absolute;
+
+    width: 7px;
+
+    height: 15px;
+
+    background: var(--red);
+
+    animation:
+        fall 4s linear infinite;
+
+}
+
+
+.confetti-piece:nth-child(2n) {
+    background: white;
+}
+
+
+.confetti-piece:nth-child(3n) {
+    background: #555;
+}
+
+
+@keyframes fall {
+
+    from {
+
+        transform:
+            translateY(-20vh)
+            rotate(0deg);
+
+    }
+
+    to {
+
+        transform:
+            translateY(120vh)
+            rotate(720deg);
+
+    }
+
+}
+
+
+/* =========================================
+   FINAL SCREEN
+========================================= */
+
+#finalScreen {
+
+    background:
+
+        linear-gradient(
+            #020304,
+            #090b0f
+        );
+
+}
+
+
+.final-content {
+
+    text-align: center;
+
+    position: relative;
+
+    z-index: 10;
+
+}
+
+
+.final-content h2 {
+
+    font-size:
+        clamp(35px, 8vw, 80px);
+
+    font-style: italic;
+
+    line-height: 0.95;
+
+}
+
+
+.final-content h2 span {
+
+    display: block;
+
+    color: var(--red);
+
+}
+
+
+/* =========================================
+   REPLAY BUTTON
+========================================= */
+
+.replay-button {
+
+    margin-top: 30px;
+
+    padding: 15px 30px;
+
+    border: 1px solid var(--red);
+
+    background: #080808;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    letter-spacing: 3px;
+
+    transition: 0.3s;
+
+}
+
+
+.replay-button:hover {
+
+    background: #240006;
+
+    box-shadow:
+        0 0 30px
+        rgba(255,23,56,0.5);
+
+    transform:
+        translateY(-3px);
+
+}
+
+
+.replay-button:active {
+
+    transform: scale(0.95);
+
+}
+
+
+/* =========================================
+   FINAL CAR
+========================================= */
+
+.final-car {
+
+    position: absolute;
+
+    bottom: 18%;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: 170px;
+
+    height: 60px;
+
+    border-radius:
+        50% 45% 10% 10%;
+
+    background:
+        linear-gradient(
+            #333,
+            #050505
+        );
+
+}
+
+
+.final-car::after {
+
+    content: "";
+
+    position: absolute;
+
+    right: 3%;
+
+    top: 25px;
+
+    width: 35px;
+
+    height: 7px;
+
+    background: var(--red);
+
+    box-shadow:
+        0 0 20px 5px
+        rgba(255,23,56,0.5);
+
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.footer {
+
+    position: absolute;
+
+    bottom: 15px;
+
+    left: 0;
+
+    right: 0;
+
+    text-align: center;
+
+    color: #666;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+}
+
+
+.footer span {
+
+    color: var(--red);
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:600px) {
+
+    .car {
+
+        width: 85vw;
+
+    }
+
+    .headlight {
+
+        width: 70px;
+
+    }
+
+    .engine-button {
+
+        width: 125px;
+
+        height: 125px;
+
+    }
+
+    .birthday-message {
+
+        font-size: 14px;
+
+    }
+
+}
