@@ -1,1003 +1,1066 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Birthday Surprise</title>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Birthday Race</title>
+
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
 
-    html {
-        scroll-behavior: smooth;
-    }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    body {
-        background: #000;
-        color: white;
-        font-family: Arial, Helvetica, sans-serif;
-        overflow-x: hidden;
-    }
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    color: white;
+    font-family: Arial, sans-serif;
+}
 
-    /* =========================
-       MAIN PAGE
-    ========================== */
 
-    .page {
-        width: 100%;
-        min-height: 100vh;
-        background: #000;
-    }
+/* =========================================
+   SCENES
+========================================= */
 
-    /* =========================
-       HERO
-    ========================== */
+.scene {
+    position: absolute;
 
-    .hero {
-        min-height: 100vh;
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
+    width: 100%;
+    height: 100vh;
 
-        background:
-            radial-gradient(
-                circle at center,
-                rgba(60,60,60,.15),
-                rgba(0,0,0,.95) 70%
-            ),
-            #000;
-    }
+    top: 0;
+    left: 100%;
 
-    .garage-light {
-        position: absolute;
-        width: 4px;
-        height: 120px;
-        background: #ff1e1e;
-        box-shadow: 0 0 25px #ff1e1e;
-        opacity: .8;
-    }
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    .garage-light.left {
-        left: 7%;
-        top: 45%;
-    }
+    overflow: hidden;
 
-    .garage-light.right {
-        right: 7%;
-        top: 45%;
-    }
+    transition:
+        left 1.2s cubic-bezier(.77,0,.18,1);
+}
 
-    .hero-content {
-        text-align: center;
-        position: relative;
-        z-index: 3;
-        padding: 20px;
-    }
+.scene.active {
+    left: 0;
+}
 
-    .small-title {
-        color: #ff2525;
-        letter-spacing: 5px;
-        font-size: 15px;
-        font-weight: bold;
-        margin-bottom: 18px;
-    }
+.scene.previous {
+    left: -100%;
+}
 
-    .ready {
-        font-size: clamp(25px, 5vw, 55px);
-        letter-spacing: 12px;
-        font-weight: 800;
-    }
 
-    .birthday-surprise {
-        margin-top: 8px;
-        color: #e21c23;
-        font-size: clamp(35px, 7vw, 80px);
-        font-style: italic;
-        font-weight: 900;
-        letter-spacing: 5px;
-        text-transform: uppercase;
-        text-shadow: 0 0 20px rgba(255,0,0,.3);
-    }
+/* =========================================
+   SCENE 1
+========================================= */
 
-    /* =========================
-       CAR
-    ========================== */
+#scene1 {
 
-    .car {
-        width: min(700px, 90vw);
-        height: 260px;
-        margin: 30px auto;
-        position: relative;
-    }
-
-    .car-body {
-        position: absolute;
-        left: 5%;
-        right: 5%;
-        bottom: 30px;
-        height: 130px;
-        background: linear-gradient(
-            180deg,
-            #151515,
-            #020202
+    background:
+        radial-gradient(
+            circle at center,
+            #181818,
+            #030303 70%
         );
-        border-radius: 48% 48% 18% 18%;
-        border: 2px solid #222;
-        box-shadow:
-            0 20px 50px rgba(0,0,0,.9),
-            inset 0 0 25px #111;
-    }
+}
 
-    .roof {
-        position: absolute;
-        width: 50%;
-        height: 90px;
-        left: 25%;
-        top: 5px;
-        border-radius: 55% 55% 10% 10%;
-        border: 3px solid #252525;
-        border-bottom: none;
-    }
+.hero-content {
+    text-align: center;
+    z-index: 5;
+}
 
-    .windshield {
-        position: absolute;
-        width: 38%;
-        height: 55px;
-        left: 31%;
-        top: 22px;
-        background: linear-gradient(
-            145deg,
-            #080808,
-            #15191d
-        );
-        border: 2px solid #252525;
-        clip-path: polygon(12% 100%, 25% 0, 75% 0, 88% 100%);
-    }
+.small-title {
 
-    .grille {
-        position: absolute;
-        width: 30%;
-        height: 65px;
-        left: 35%;
-        bottom: 40px;
-        border: 3px solid #222;
-        border-radius: 30%;
-    }
+    color: #ed2024;
 
-    .headlight {
-        position: absolute;
-        width: 105px;
-        height: 30px;
-        top: 80px;
-        border-radius: 50%;
-        background: #eafaff;
-        box-shadow:
-            0 0 15px #bdeeff,
-            0 0 40px rgba(150,220,255,.7);
-    }
+    letter-spacing: 6px;
 
-    .headlight.left {
-        left: 8%;
-        transform: rotate(8deg);
-    }
+    font-weight: bold;
 
-    .headlight.right {
-        right: 8%;
-        transform: rotate(-8deg);
-    }
+    margin-bottom: 15px;
+}
 
-    .wheel {
-        position: absolute;
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        background: #020202;
-        border: 8px solid #111;
-        bottom: 5px;
-    }
+.ready {
 
-    .wheel.left {
-        left: 14%;
-    }
+    font-size:
+        clamp(25px, 5vw, 55px);
 
-    .wheel.right {
-        right: 14%;
-    }
+    font-weight: 800;
 
-    /* =========================
-       START ENGINE
-    ========================== */
+    letter-spacing: 8px;
+}
 
-    .engine-button {
-        width: 125px;
-        height: 125px;
-        margin: -10px auto 0;
-        border-radius: 50%;
-        border: 4px solid #ff2028;
-        background: #080808;
-        color: white;
-        cursor: pointer;
+.surprise-title {
 
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    margin-top: 10px;
 
-        font-weight: bold;
-        font-size: 18px;
-        line-height: 1.1;
+    color: #e21c23;
 
-        box-shadow:
-            0 0 15px rgba(255,0,0,.5),
-            inset 0 0 20px rgba(255,0,0,.15);
+    font-size:
+        clamp(35px, 7vw, 80px);
 
-        transition: .3s ease;
-    }
+    font-style: italic;
 
-    .engine-button:hover {
-        transform: scale(1.08);
-        box-shadow:
-            0 0 30px rgba(255,0,0,.8),
-            inset 0 0 25px rgba(255,0,0,.3);
-    }
+    font-weight: 900;
+}
 
-    .engine-button:active {
-        transform: scale(.95);
-    }
 
-    .click-start {
-        margin-top: 15px;
-        font-size: 11px;
-        letter-spacing: 4px;
-        color: #aaa;
-    }
+/* =========================================
+   CAR
+========================================= */
 
-    .arrow {
-        margin-top: 8px;
-        color: #ff2424;
-        font-size: 20px;
-    }
+.car {
 
-    /* =========================
-       SOUND BUTTON
-    ========================== */
+    width: 500px;
+    max-width: 85vw;
 
-    .sound-button {
-        position: fixed;
-        top: 25px;
-        left: 25px;
-        z-index: 100;
-        padding: 10px 16px;
-        background: rgba(0,0,0,.7);
-        color: white;
-        border: 1px solid #555;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 11px;
-        letter-spacing: 2px;
-    }
+    height: 200px;
 
-    /* =========================
-       SURPRISE SECTIONS
-    ========================== */
+    margin: 20px auto;
 
-    .surprise {
-        min-height: 100vh;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 50px 8%;
-        overflow: hidden;
-        border-top: 1px solid #222;
-    }
+    position: relative;
+}
 
-    .section-one {
-        background:
-            linear-gradient(
-                90deg,
-                rgba(0,0,0,.9),
-                rgba(0,0,0,.25),
-                rgba(0,0,0,.85)
-            ),
-            radial-gradient(
-                ellipse at 30% 70%,
-                #333,
-                #050505 70%
-            );
-    }
+.car-body {
 
-    .section-two {
-        background:
-            radial-gradient(
-                circle at 25% 70%,
-                rgba(100,100,100,.2),
-                transparent 40%
-            ),
-            #030303;
-    }
+    position: absolute;
 
-    .section-three {
-        background:
-            linear-gradient(
-                180deg,
-                #05080b,
-                #000
-            );
-    }
+    bottom: 30px;
 
-    /* road */
+    left: 5%;
 
-    .road {
-        position: absolute;
-        width: 80%;
-        height: 2px;
-        bottom: 25%;
-        background: #777;
-        box-shadow:
-            0 30px 0 #333,
-            0 60px 0 #111;
-        transform: perspective(400px) rotateX(50deg);
-        opacity: .5;
-    }
+    width: 90%;
 
-    .city {
-        position: absolute;
-        bottom: 30%;
-        width: 100%;
-        height: 150px;
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
-        gap: 10px;
-        opacity: .35;
-    }
+    height: 100px;
 
-    .building {
-        width: 35px;
-        background: linear-gradient(#222,#050505);
-        border-top: 2px solid #777;
-    }
-
-    .building:nth-child(1) { height: 70px; }
-    .building:nth-child(2) { height: 110px; }
-    .building:nth-child(3) { height: 85px; }
-    .building:nth-child(4) { height: 145px; }
-    .building:nth-child(5) { height: 100px; }
-    .building:nth-child(6) { height: 160px; }
-    .building:nth-child(7) { height: 120px; }
-    .building:nth-child(8) { height: 90px; }
-
-    /* =========================
-       MOVING CAR
-    ========================== */
-
-    .moving-car {
-        position: absolute;
-        left: 8%;
-        bottom: 23%;
-        width: 360px;
-        height: 130px;
-        transition: 2s ease;
-    }
-
-    .moving-car .body {
-        position: absolute;
-        width: 100%;
-        height: 65px;
-        bottom: 20px;
-        background: linear-gradient(
-            160deg,
+    background:
+        linear-gradient(
             #222,
             #030303
         );
-        border-radius: 55% 20% 15% 15%;
-        border: 1px solid #333;
+
+    border-radius:
+        50% 50% 15% 15%;
+
+    border: 2px solid #333;
+}
+
+.car-window {
+
+    position: absolute;
+
+    width: 45%;
+
+    height: 60px;
+
+    top: 20px;
+
+    left: 27%;
+
+    background: #080b0e;
+
+    clip-path:
+        polygon(
+            15% 100%,
+            30% 0,
+            70% 0,
+            85% 100%
+        );
+}
+
+.light {
+
+    position: absolute;
+
+    width: 75px;
+    height: 20px;
+
+    top: 65px;
+
+    background: white;
+
+    box-shadow:
+        0 0 25px #fff;
+}
+
+.light.left {
+    left: 8%;
+}
+
+.light.right {
+    right: 8%;
+}
+
+.wheel {
+
+    position: absolute;
+
+    width: 60px;
+    height: 60px;
+
+    bottom: 0;
+
+    border-radius: 50%;
+
+    background: #000;
+
+    border: 8px solid #222;
+}
+
+.wheel.left {
+    left: 15%;
+}
+
+.wheel.right {
+    right: 15%;
+}
+
+
+/* =========================================
+   START BUTTON
+========================================= */
+
+.start {
+
+    width: 120px;
+    height: 120px;
+
+    border-radius: 50%;
+
+    border: 4px solid #ed2024;
+
+    background: #050505;
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    box-shadow:
+        0 0 20px
+        rgba(255,0,0,.4);
+
+    transition: .3s;
+}
+
+.start:hover {
+
+    transform: scale(1.08);
+
+    box-shadow:
+        0 0 40px red;
+}
+
+
+/* =========================================
+   SCENE 2 — RACE
+========================================= */
+
+#scene2 {
+
+    background:
+        linear-gradient(
+            #060606,
+            #101010
+        );
+}
+
+
+/* Road */
+
+.road {
+
+    position: absolute;
+
+    bottom: 15%;
+
+    width: 100%;
+
+    height: 4px;
+
+    background: #777;
+
+    box-shadow:
+        0 40px #222,
+        0 80px #111;
+
+    transform:
+        perspective(400px)
+        rotateX(55deg);
+}
+
+
+/* Race car */
+
+.race-car {
+
+    position: absolute;
+
+    left: -350px;
+
+    bottom: 25%;
+
+    width: 330px;
+
+    height: 120px;
+
+    transition:
+        left 4s
+        cubic-bezier(.2,.7,.2,1);
+}
+
+.race-car.drive {
+
+    left: 110%;
+}
+
+.race-body {
+
+    position: absolute;
+
+    bottom: 20px;
+
+    width: 100%;
+
+    height: 65px;
+
+    background:
+        linear-gradient(
+            160deg,
+            #242424,
+            #030303
+        );
+
+    border-radius:
+        50% 20% 15% 15%;
+
+    border: 1px solid #444;
+}
+
+.race-window {
+
+    position: absolute;
+
+    width: 50%;
+
+    height: 45px;
+
+    left: 25%;
+
+    top: 5px;
+
+    background: #050708;
+
+    clip-path:
+        polygon(
+            15% 100%,
+            30% 0,
+            75% 0,
+            100% 100%
+        );
+}
+
+.race-wheel {
+
+    position: absolute;
+
+    bottom: 0;
+
+    width: 45px;
+
+    height: 45px;
+
+    border-radius: 50%;
+
+    background: #000;
+
+    border: 7px solid #222;
+}
+
+.race-wheel.one {
+    left: 18%;
+}
+
+.race-wheel.two {
+    right: 12%;
+}
+
+
+/* Race text */
+
+.race-text {
+
+    position: relative;
+
+    z-index: 5;
+
+    text-align: center;
+
+    transition:
+        opacity .8s,
+        transform .8s;
+}
+
+.race-text h1 {
+
+    font-size:
+        clamp(40px, 7vw, 80px);
+
+    font-style: italic;
+
+    line-height: 1;
+}
+
+.race-text span {
+
+    color: #ed2024;
+}
+
+
+/* =========================================
+   SCENE 3 — BIRTHDAY
+========================================= */
+
+#scene3 {
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(100,0,0,.25),
+            #000 70%
+        );
+
+    text-align: center;
+}
+
+.birthday h1 {
+
+    font-size:
+        clamp(55px, 10vw, 110px);
+
+    font-style: italic;
+
+    line-height: .9;
+}
+
+.birthday h1 span {
+
+    color: #ed2024;
+}
+
+.champion {
+
+    margin: 25px 0;
+
+    color: #e4b94d;
+
+    font-family: cursive;
+
+    font-size:
+        clamp(40px, 7vw, 70px);
+}
+
+.wishes {
+
+    max-width: 750px;
+
+    margin: auto;
+
+    color: #ddd;
+
+    font-size: 15px;
+
+    line-height: 2;
+
+    letter-spacing: 3px;
+}
+
+.replay {
+
+    margin-top: 40px;
+
+    padding: 13px 30px;
+
+    background: transparent;
+
+    color: white;
+
+    border: 1px solid #777;
+
+    cursor: pointer;
+
+    letter-spacing: 3px;
+}
+
+.replay:hover {
+
+    border-color: #ed2024;
+
+    color: #ed2024;
+}
+
+
+/* =========================================
+   SOUND BUTTON
+========================================= */
+
+.sound {
+
+    position: fixed;
+
+    z-index: 100;
+
+    top: 20px;
+
+    left: 20px;
+
+    background:
+        rgba(0,0,0,.7);
+
+    color: white;
+
+    border: 1px solid #555;
+
+    padding: 9px 14px;
+
+    cursor: pointer;
+
+    font-size: 11px;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:600px) {
+
+    .ready {
+        letter-spacing: 3px;
     }
 
-    .moving-car .window {
-        position: absolute;
-        width: 50%;
-        height: 45px;
-        left: 27%;
-        top: 5px;
-        background: #070a0d;
-        clip-path: polygon(15% 100%, 28% 0, 75% 0, 100% 100%);
-        border: 1px solid #333;
+    .car {
+        transform: scale(.75);
     }
 
-    .tail-light {
-        position: absolute;
-        width: 75px;
-        height: 12px;
-        right: 3%;
-        top: 45px;
-        background: #ff1c1c;
-        box-shadow: 0 0 20px red;
-        border-radius: 50%;
+    .race-car {
+        transform: scale(.7);
     }
 
-    .moving-wheel {
-        position: absolute;
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        background: #050505;
-        border: 6px solid #222;
-        bottom: 0;
+    .wishes {
+        width: 90%;
+        font-size: 12px;
     }
 
-    .moving-wheel.one {
-        left: 18%;
-    }
+}
 
-    .moving-wheel.two {
-        right: 12%;
-    }
-
-    /* =========================
-       TEXT
-    ========================== */
-
-    .message {
-        position: relative;
-        z-index: 5;
-        max-width: 600px;
-        margin-left: auto;
-        text-align: left;
-    }
-
-    .message h2 {
-        font-size: clamp(35px, 7vw, 70px);
-        font-style: italic;
-        line-height: .95;
-        text-transform: uppercase;
-    }
-
-    .red {
-        color: #ed2024;
-    }
-
-    .message p {
-        margin-top: 25px;
-        color: #ddd;
-        font-size: 16px;
-        line-height: 1.7;
-        letter-spacing: 2px;
-    }
-
-    /* =========================
-       FINAL BIRTHDAY
-    ========================== */
-
-    .final {
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        position: relative;
-        background:
-            radial-gradient(
-                circle at center,
-                rgba(100,0,0,.25),
-                #000 70%
-            );
-    }
-
-    .hearts {
-        position: absolute;
-        inset: 0;
-        overflow: hidden;
-    }
-
-    .heart {
-        position: absolute;
-        color: #e51e25;
-        font-size: 20px;
-        animation: float 6s linear infinite;
-        opacity: .6;
-    }
-
-    @keyframes float {
-        from {
-            transform: translateY(100vh) rotate(0);
-            opacity: 0;
-        }
-
-        20% {
-            opacity: .7;
-        }
-
-        to {
-            transform: translateY(-20vh) rotate(360deg);
-            opacity: 0;
-        }
-    }
-
-    .final-content {
-        position: relative;
-        z-index: 2;
-        padding: 30px;
-    }
-
-    .final h1 {
-        font-size: clamp(50px, 10vw, 110px);
-        font-style: italic;
-        line-height: .9;
-        text-transform: uppercase;
-    }
-
-    .champion {
-        color: #e9b84a;
-        font-family: cursive;
-        font-size: clamp(40px, 7vw, 75px);
-        margin: 20px 0;
-    }
-
-    .final p {
-        max-width: 700px;
-        margin: auto;
-        font-size: 15px;
-        line-height: 2;
-        letter-spacing: 4px;
-        color: #ddd;
-    }
-
-    .replay {
-        margin-top: 50px;
-        padding: 14px 35px;
-        background: transparent;
-        color: white;
-        border: 1px solid #777;
-        cursor: pointer;
-        letter-spacing: 4px;
-        transition: .3s;
-    }
-
-    .replay:hover {
-        border-color: #e21c23;
-        color: #e21c23;
-        box-shadow: 0 0 20px rgba(255,0,0,.3);
-    }
-
-    /* =========================
-       FOOTER
-    ========================== */
-
-    footer {
-        background: #000;
-        border-top: 1px solid #222;
-        padding: 25px;
-        text-align: center;
-        font-size: 11px;
-        letter-spacing: 4px;
-        color: #aaa;
-    }
-
-    footer span {
-        color: #e21c23;
-    }
-
-    /* =========================
-       ENGINE ANIMATION
-    ========================== */
-
-    body.started .engine-button {
-        animation: enginePulse .5s infinite alternate;
-    }
-
-    body.started .moving-car {
-        transform: translateX(130vw);
-    }
-
-    @keyframes enginePulse {
-        from {
-            box-shadow: 0 0 10px red;
-        }
-
-        to {
-            box-shadow: 0 0 50px red;
-        }
-    }
-
-    /* =========================
-       MOBILE
-    ========================== */
-
-    @media(max-width: 600px) {
-
-        .ready {
-            letter-spacing: 5px;
-        }
-
-        .birthday-surprise {
-            letter-spacing: 2px;
-        }
-
-        .car {
-            transform: scale(.8);
-        }
-
-        .moving-car {
-            transform: scale(.65);
-            left: -20px;
-        }
-
-        body.started .moving-car {
-            transform: scale(.65) translateX(130vw);
-        }
-
-        .message {
-            text-align: center;
-            margin: 0;
-        }
-
-        .message p {
-            font-size: 13px;
-        }
-
-        .sound-button {
-            top: 15px;
-            left: 15px;
-        }
-    }
 </style>
+
 </head>
+
 
 <body>
 
-<div class="page">
 
-    <!-- SOUND -->
-    <button class="sound-button" id="soundButton">
-        🔊 SOUND ON
-    </button>
+<!-- SOUND -->
 
-    <!-- HERO -->
-    <section class="hero" id="hero">
-
-        <div class="garage-light left"></div>
-        <div class="garage-light right"></div>
-
-        <div class="hero-content">
-
-            <div class="small-title">HEY...</div>
-
-            <div class="ready">
-                READY FOR YOUR
-            </div>
-
-            <div class="birthday-surprise">
-                BIRTHDAY SURPRISE?
-            </div>
-
-            <!-- CSS CAR -->
-            <div class="car">
-
-                <div class="roof"></div>
-
-                <div class="windshield"></div>
-
-                <div class="car-body"></div>
-
-                <div class="headlight left"></div>
-                <div class="headlight right"></div>
-
-                <div class="grille"></div>
-
-                <div class="wheel left"></div>
-                <div class="wheel right"></div>
-
-            </div>
-
-            <button class="engine-button" id="startEngine">
-                START<br>ENGINE
-            </button>
-
-            <div class="click-start">
-                CLICK TO START
-            </div>
-
-            <div class="arrow">
-                ↓
-            </div>
-
-        </div>
-    </section>
+<button
+    class="sound"
+    id="soundButton"
+>
+    🔊 SOUND ON
+</button>
 
 
-    <!-- RIDE -->
-    <section class="surprise section-one">
 
-        <div class="city">
-            <div class="building"></div>
-            <div class="building"></div>
-            <div class="building"></div>
-            <div class="building"></div>
-            <div class="building"></div>
-            <div class="building"></div>
-            <div class="building"></div>
-            <div class="building"></div>
+<!-- =========================================
+     SCENE 1
+========================================= -->
+
+<section
+    class="scene active"
+    id="scene1"
+>
+
+    <div class="hero-content">
+
+        <div class="small-title">
+            HEY...
         </div>
 
-        <div class="moving-car">
+        <div class="ready">
+            READY FOR YOUR
+        </div>
 
-            <div class="body"></div>
+        <div class="surprise-title">
+            BIRTHDAY SURPRISE?
+        </div>
 
-            <div class="window"></div>
 
-            <div class="tail-light"></div>
+        <div class="car">
 
-            <div class="moving-wheel one"></div>
-            <div class="moving-wheel two"></div>
+            <div class="car-body"></div>
+
+            <div class="car-window"></div>
+
+            <div class="light left"></div>
+
+            <div class="light right"></div>
+
+            <div class="wheel left"></div>
+
+            <div class="wheel right"></div>
 
         </div>
 
-        <div class="road"></div>
 
-        <div class="message">
+        <button
+            class="start"
+            id="startButton"
+        >
+            START<br>
+            ENGINE
+        </button>
 
-            <h2>
-                THIS RIDE IS
+        <div style="
+            margin-top:15px;
+            font-size:10px;
+            letter-spacing:3px;
+            color:#aaa;
+        ">
+            CLICK TO START
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================
+     SCENE 2 — RACE START
+========================================= -->
+
+<section
+    class="scene"
+    id="scene2"
+>
+
+    <div class="road"></div>
+
+
+    <div
+        class="race-car"
+        id="raceCar"
+    >
+
+        <div class="race-body"></div>
+
+        <div class="race-window"></div>
+
+        <div class="race-wheel one"></div>
+
+        <div class="race-wheel two"></div>
+
+    </div>
+
+
+    <div
+        class="race-text"
+        id="raceText"
+    >
+
+        <h1>
+
+            THIS RIDE IS
+
+            <br>
+
+            <span>
+                JUST GETTING
                 <br>
-                <span class="red">
-                    JUST GETTING
-                    <br>
-                    STARTED...
-                </span>
-            </h2>
+                STARTED...
+            </span>
+
+        </h1>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================
+     SCENE 3 — BIRTHDAY
+========================================= -->
+
+<section
+    class="scene"
+    id="scene3"
+>
+
+    <div class="birthday">
+
+        <h1>
+
+            HAPPY
+
+            <br>
+
+            <span>
+                BIRTHDAY!
+            </span>
+
+        </h1>
+
+
+        <div class="champion">
+            Champion! ♡
+        </div>
+
+
+        <div class="wishes">
+
+            WISHING YOU A YEAR FULL OF
+
+            <br>
+
+            SPEED, SUCCESS, ADVENTURES
+
+            <br>
+
+            AND UNFORGETTABLE MOMENTS.
 
         </div>
 
-    </section>
 
+        <button
+            class="replay"
+            id="replay"
+        >
+            ↻ &nbsp; REPLAY
+        </button>
 
-    <!-- BIRTHDAY MESSAGE -->
-    <section class="surprise section-two">
+    </div>
 
-        <div class="message">
+</section>
 
-            <h2>
-                HAPPY
-                <br>
-                <span class="red">
-                    BIRTHDAY!
-                </span>
-            </h2>
-
-            <div class="champion">
-                Champion!
-            </div>
-
-            <p>
-                WISHING YOU A YEAR FULL OF
-                <span class="red">SPEED</span>,
-                SUCCESS, ADVENTURES AND
-                UNFORGETTABLE MOMENTS.
-            </p>
-
-        </div>
-
-    </section>
-
-
-    <!-- FINAL ROAD -->
-    <section class="surprise section-three">
-
-        <div class="road"></div>
-
-        <div class="moving-car">
-
-            <div class="body"></div>
-
-            <div class="window"></div>
-
-            <div class="tail-light"></div>
-
-            <div class="moving-wheel one"></div>
-            <div class="moving-wheel two"></div>
-
-        </div>
-
-        <div class="message">
-
-            <h2>
-                YOUR BEST LAP
-                <br>
-                <span class="red">
-                    IS YET TO COME.
-                </span>
-            </h2>
-
-        </div>
-
-    </section>
-
-
-    <!-- FINAL BIRTHDAY SCREEN -->
-    <section class="final">
-
-        <div class="hearts">
-
-            <div class="heart" style="left:10%; animation-delay:0s;">♥</div>
-            <div class="heart" style="left:25%; animation-delay:2s;">♥</div>
-            <div class="heart" style="left:45%; animation-delay:1s;">♥</div>
-            <div class="heart" style="left:65%; animation-delay:3s;">♥</div>
-            <div class="heart" style="left:80%; animation-delay:1.5s;">♥</div>
-            <div class="heart" style="left:90%; animation-delay:4s;">♥</div>
-
-        </div>
-
-        <div class="final-content">
-
-            <h1>
-                HAPPY
-                <br>
-                <span class="red">
-                    BIRTHDAY!
-                </span>
-            </h1>
-
-            <div class="champion">
-                Champion! ♡
-            </div>
-
-            <p>
-                WISHING YOU A YEAR FULL OF
-                SPEED, SUCCESS, ADVENTURES
-                AND UNFORGETTABLE MOMENTS :)
-            </p>
-
-            <button class="replay" id="replay">
-                ↻ &nbsp; REPLAY
-            </button>
-
-        </div>
-
-    </section>
-
-
-    <footer>
-        BUCKLE UP FOR AN
-        <span>INCREDIBLE YEAR AHEAD!</span>
-        🏁
-    </footer>
-
-</div>
-
-
-<!-- OPTIONAL MUSIC -->
-<audio id="engineSound" preload="auto">
-    <!--
-    Put your sound file here:
-
-    <source src="engine.mp3" type="audio/mpeg">
-    -->
-</audio>
 
 
 <script>
 
-    const startButton =
-        document.getElementById("startEngine");
+/* =========================================
+   ELEMENTS
+========================================= */
 
-    const replayButton =
-        document.getElementById("replay");
+const startButton =
+    document.getElementById("startButton");
 
-    const soundButton =
-        document.getElementById("soundButton");
+const scene1 =
+    document.getElementById("scene1");
 
-    const engineSound =
-        document.getElementById("engineSound");
+const scene2 =
+    document.getElementById("scene2");
 
+const scene3 =
+    document.getElementById("scene3");
 
-    /* =========================
-       START ENGINE
-    ========================== */
+const raceCar =
+    document.getElementById("raceCar");
 
-    startButton.addEventListener("click", function () {
+const replay =
+    document.getElementById("replay");
 
-        document.body.classList.add("started");
-
-        /*
-           Play sound if an audio file
-           has been added.
-        */
-
-        if (engineSound.src) {
-
-            engineSound.currentTime = 0;
-
-            engineSound.play().catch(() => {});
-
-        }
-
-        setTimeout(function () {
-
-            document.querySelector(".section-one")
-                .scrollIntoView({
-                    behavior: "smooth",
-                   block:"start"
-                });
-
-        }, 10);
-
-        setTimeout(function () {
-
-            document.querySelector(".section-two")
-                .scrollIntoView({
-                    behavior: "smooth",
-                   block:"start"
-                });
-
-        }, 30);
-
-        setTimeout(function () {
-
-            document.querySelector(".section-three")
-                .scrollIntoView({
-                    behavior: "smooth",
-                   block:"start"
-                });
-
-        }, 40);
+const soundButton =
+    document.getElementById("soundButton");
 
 
-    });
+let audioContext = null;
+
+let oscillator = null;
+
+let gain = null;
+
+let soundOn = true;
 
 
-    /* =========================
-       SOUND BUTTON
-    ========================== */
+/* =========================================
+   CHANGE SCENE
+========================================= */
 
-    let soundOn = true;
+function showScene(scene) {
 
-    soundButton.addEventListener("click", function () {
+    document
+        .querySelectorAll(".scene")
+        .forEach(function(item) {
 
-        soundOn = !soundOn;
+            item.classList.remove(
+                "active",
+                "previous"
+            );
+
+        });
+
+
+    scene.classList.add("active");
+}
+
+
+/* =========================================
+   ENGINE SOUND
+========================================= */
+
+function startEngineSound() {
+
+    if (!soundOn)
+        return;
+
+
+    audioContext =
+        new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+
+
+    oscillator =
+        audioContext.createOscillator();
+
+
+    gain =
+        audioContext.createGain();
+
+
+    oscillator.type =
+        "sawtooth";
+
+
+    /*
+       Engine starts low
+    */
+
+    oscillator.frequency.setValueAtTime(
+        55,
+        audioContext.currentTime
+    );
+
+
+    /*
+       Rev up
+    */
+
+    oscillator.frequency.exponentialRampToValueAtTime(
+        150,
+        audioContext.currentTime + 1
+    );
+
+
+    /*
+       Driving RPM
+    */
+
+    oscillator.frequency.exponentialRampToValueAtTime(
+        90,
+        audioContext.currentTime + 4
+    );
+
+
+    gain.gain.setValueAtTime(
+        0.001,
+        audioContext.currentTime
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.20,
+        audioContext.currentTime + .2
+    );
+
+
+    oscillator.connect(gain);
+
+    gain.connect(
+        audioContext.destination
+    );
+
+
+    oscillator.start();
+}
+
+
+/* =========================================
+   START EXPERIENCE
+========================================= */
+
+startButton.addEventListener(
+    "click",
+    function() {
+
+
+        /* -----------------------------
+           1. ENGINE SOUND
+        ----------------------------- */
+
+        startEngineSound();
+
+
+        /* -----------------------------
+           2. GO TO RACE SCENE
+        ----------------------------- */
+
+        setTimeout(function() {
+
+            showScene(scene2);
+
+            /*
+               Start car after scene
+               transition begins
+            */
+
+            setTimeout(function() {
+
+                raceCar.classList.add(
+                    "drive"
+                );
+
+            }, 500);
+
+        }, 700);
+
+
+        /* -----------------------------
+           3. GO TO BIRTHDAY
+        ----------------------------- */
+
+        setTimeout(function() {
+
+            showScene(scene3);
+
+            stopEngineSound();
+
+        }, 5200);
+
+    }
+);
+
+
+/* =========================================
+   STOP SOUND
+========================================= */
+
+function stopEngineSound() {
+
+    if (
+        !audioContext ||
+        !oscillator
+    )
+        return;
+
+
+    try {
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.001,
+            audioContext.currentTime + .5
+        );
+
+
+        setTimeout(function() {
+
+            try {
+                oscillator.stop();
+            }
+            catch(e) {}
+
+        }, 600);
+
+    }
+    catch(e) {}
+
+}
+
+
+/* =========================================
+   SOUND ON/OFF
+========================================= */
+
+soundButton.addEventListener(
+    "click",
+    function() {
+
+        soundOn =
+            !soundOn;
+
 
         if (soundOn) {
 
             soundButton.innerHTML =
                 "🔊 SOUND ON";
 
-            engineSound.muted = false;
+            if (gain) {
+                gain.gain.value =
+                    .20;
+            }
 
-        } else {
+        }
+        else {
 
             soundButton.innerHTML =
                 "🔇 SOUND OFF";
 
-            engineSound.muted = true;
+            if (gain) {
+                gain.gain.value =
+                    0;
+            }
 
         }
 
-    });
+    }
+);
 
 
-    /* =========================
-       REPLAY
-    ========================== */
+/* =========================================
+   REPLAY
+========================================= */
 
-    replayButton.addEventListener("click", function () {
+replay.addEventListener(
+    "click",
+    function() {
 
-        document.body.classList.remove("started");
 
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
+        stopEngineSound();
 
-    });
+
+        raceCar.classList.remove(
+            "drive"
+        );
+
+
+        showScene(scene1);
+
+
+    }
+);
 
 </script>
+
 
 </body>
 </html>
