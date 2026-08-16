@@ -1,325 +1,981 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta charset="UTF-8">
+<title>Birthday Surprise</title>
 
-    <meta
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        name="viewport"
+    html {
+        scroll-behavior: smooth;
+    }
 
-        content="width=device-width, initial-scale=1.0"
+    body {
+        background: #000;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+        overflow-x: hidden;
+    }
 
-    >
+    /* =========================
+       MAIN PAGE
+    ========================== */
 
-    <title>Birthday Racing Surprise</title>
+    .page {
+        width: 100%;
+        min-height: 100vh;
+        background: #000;
+    }
 
-    <link
+    /* =========================
+       HERO
+    ========================== */
 
-        rel="stylesheet"
+    .hero {
+        min-height: 100vh;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
 
-        href="style.css"
+        background:
+            radial-gradient(
+                circle at center,
+                rgba(60,60,60,.15),
+                rgba(0,0,0,.95) 70%
+            ),
+            #000;
+    }
 
-    >
+    .garage-light {
+        position: absolute;
+        width: 4px;
+        height: 120px;
+        background: #ff1e1e;
+        box-shadow: 0 0 25px #ff1e1e;
+        opacity: .8;
+    }
 
+    .garage-light.left {
+        left: 7%;
+        top: 45%;
+    }
+
+    .garage-light.right {
+        right: 7%;
+        top: 45%;
+    }
+
+    .hero-content {
+        text-align: center;
+        position: relative;
+        z-index: 3;
+        padding: 20px;
+    }
+
+    .small-title {
+        color: #ff2525;
+        letter-spacing: 5px;
+        font-size: 15px;
+        font-weight: bold;
+        margin-bottom: 18px;
+    }
+
+    .ready {
+        font-size: clamp(25px, 5vw, 55px);
+        letter-spacing: 12px;
+        font-weight: 800;
+    }
+
+    .birthday-surprise {
+        margin-top: 8px;
+        color: #e21c23;
+        font-size: clamp(35px, 7vw, 80px);
+        font-style: italic;
+        font-weight: 900;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        text-shadow: 0 0 20px rgba(255,0,0,.3);
+    }
+
+    /* =========================
+       CAR
+    ========================== */
+
+    .car {
+        width: min(700px, 90vw);
+        height: 260px;
+        margin: 30px auto;
+        position: relative;
+    }
+
+    .car-body {
+        position: absolute;
+        left: 5%;
+        right: 5%;
+        bottom: 30px;
+        height: 130px;
+        background: linear-gradient(
+            180deg,
+            #151515,
+            #020202
+        );
+        border-radius: 48% 48% 18% 18%;
+        border: 2px solid #222;
+        box-shadow:
+            0 20px 50px rgba(0,0,0,.9),
+            inset 0 0 25px #111;
+    }
+
+    .roof {
+        position: absolute;
+        width: 50%;
+        height: 90px;
+        left: 25%;
+        top: 5px;
+        border-radius: 55% 55% 10% 10%;
+        border: 3px solid #252525;
+        border-bottom: none;
+    }
+
+    .windshield {
+        position: absolute;
+        width: 38%;
+        height: 55px;
+        left: 31%;
+        top: 22px;
+        background: linear-gradient(
+            145deg,
+            #080808,
+            #15191d
+        );
+        border: 2px solid #252525;
+        clip-path: polygon(12% 100%, 25% 0, 75% 0, 88% 100%);
+    }
+
+    .grille {
+        position: absolute;
+        width: 30%;
+        height: 65px;
+        left: 35%;
+        bottom: 40px;
+        border: 3px solid #222;
+        border-radius: 30%;
+    }
+
+    .headlight {
+        position: absolute;
+        width: 105px;
+        height: 30px;
+        top: 80px;
+        border-radius: 50%;
+        background: #eafaff;
+        box-shadow:
+            0 0 15px #bdeeff,
+            0 0 40px rgba(150,220,255,.7);
+    }
+
+    .headlight.left {
+        left: 8%;
+        transform: rotate(8deg);
+    }
+
+    .headlight.right {
+        right: 8%;
+        transform: rotate(-8deg);
+    }
+
+    .wheel {
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: #020202;
+        border: 8px solid #111;
+        bottom: 5px;
+    }
+
+    .wheel.left {
+        left: 14%;
+    }
+
+    .wheel.right {
+        right: 14%;
+    }
+
+    /* =========================
+       START ENGINE
+    ========================== */
+
+    .engine-button {
+        width: 125px;
+        height: 125px;
+        margin: -10px auto 0;
+        border-radius: 50%;
+        border: 4px solid #ff2028;
+        background: #080808;
+        color: white;
+        cursor: pointer;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 1.1;
+
+        box-shadow:
+            0 0 15px rgba(255,0,0,.5),
+            inset 0 0 20px rgba(255,0,0,.15);
+
+        transition: .3s ease;
+    }
+
+    .engine-button:hover {
+        transform: scale(1.08);
+        box-shadow:
+            0 0 30px rgba(255,0,0,.8),
+            inset 0 0 25px rgba(255,0,0,.3);
+    }
+
+    .engine-button:active {
+        transform: scale(.95);
+    }
+
+    .click-start {
+        margin-top: 15px;
+        font-size: 11px;
+        letter-spacing: 4px;
+        color: #aaa;
+    }
+
+    .arrow {
+        margin-top: 8px;
+        color: #ff2424;
+        font-size: 20px;
+    }
+
+    /* =========================
+       SOUND BUTTON
+    ========================== */
+
+    .sound-button {
+        position: fixed;
+        top: 25px;
+        left: 25px;
+        z-index: 100;
+        padding: 10px 16px;
+        background: rgba(0,0,0,.7);
+        color: white;
+        border: 1px solid #555;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 11px;
+        letter-spacing: 2px;
+    }
+
+    /* =========================
+       SURPRISE SECTIONS
+    ========================== */
+
+    .surprise {
+        min-height: 100vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 50px 8%;
+        overflow: hidden;
+        border-top: 1px solid #222;
+    }
+
+    .section-one {
+        background:
+            linear-gradient(
+                90deg,
+                rgba(0,0,0,.9),
+                rgba(0,0,0,.25),
+                rgba(0,0,0,.85)
+            ),
+            radial-gradient(
+                ellipse at 30% 70%,
+                #333,
+                #050505 70%
+            );
+    }
+
+    .section-two {
+        background:
+            radial-gradient(
+                circle at 25% 70%,
+                rgba(100,100,100,.2),
+                transparent 40%
+            ),
+            #030303;
+    }
+
+    .section-three {
+        background:
+            linear-gradient(
+                180deg,
+                #05080b,
+                #000
+            );
+    }
+
+    /* road */
+
+    .road {
+        position: absolute;
+        width: 80%;
+        height: 2px;
+        bottom: 25%;
+        background: #777;
+        box-shadow:
+            0 30px 0 #333,
+            0 60px 0 #111;
+        transform: perspective(400px) rotateX(50deg);
+        opacity: .5;
+    }
+
+    .city {
+        position: absolute;
+        bottom: 30%;
+        width: 100%;
+        height: 150px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        gap: 10px;
+        opacity: .35;
+    }
+
+    .building {
+        width: 35px;
+        background: linear-gradient(#222,#050505);
+        border-top: 2px solid #777;
+    }
+
+    .building:nth-child(1) { height: 70px; }
+    .building:nth-child(2) { height: 110px; }
+    .building:nth-child(3) { height: 85px; }
+    .building:nth-child(4) { height: 145px; }
+    .building:nth-child(5) { height: 100px; }
+    .building:nth-child(6) { height: 160px; }
+    .building:nth-child(7) { height: 120px; }
+    .building:nth-child(8) { height: 90px; }
+
+    /* =========================
+       MOVING CAR
+    ========================== */
+
+    .moving-car {
+        position: absolute;
+        left: 8%;
+        bottom: 23%;
+        width: 360px;
+        height: 130px;
+        transition: 2s ease;
+    }
+
+    .moving-car .body {
+        position: absolute;
+        width: 100%;
+        height: 65px;
+        bottom: 20px;
+        background: linear-gradient(
+            160deg,
+            #222,
+            #030303
+        );
+        border-radius: 55% 20% 15% 15%;
+        border: 1px solid #333;
+    }
+
+    .moving-car .window {
+        position: absolute;
+        width: 50%;
+        height: 45px;
+        left: 27%;
+        top: 5px;
+        background: #070a0d;
+        clip-path: polygon(15% 100%, 28% 0, 75% 0, 100% 100%);
+        border: 1px solid #333;
+    }
+
+    .tail-light {
+        position: absolute;
+        width: 75px;
+        height: 12px;
+        right: 3%;
+        top: 45px;
+        background: #ff1c1c;
+        box-shadow: 0 0 20px red;
+        border-radius: 50%;
+    }
+
+    .moving-wheel {
+        position: absolute;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: #050505;
+        border: 6px solid #222;
+        bottom: 0;
+    }
+
+    .moving-wheel.one {
+        left: 18%;
+    }
+
+    .moving-wheel.two {
+        right: 12%;
+    }
+
+    /* =========================
+       TEXT
+    ========================== */
+
+    .message {
+        position: relative;
+        z-index: 5;
+        max-width: 600px;
+        margin-left: auto;
+        text-align: left;
+    }
+
+    .message h2 {
+        font-size: clamp(35px, 7vw, 70px);
+        font-style: italic;
+        line-height: .95;
+        text-transform: uppercase;
+    }
+
+    .red {
+        color: #ed2024;
+    }
+
+    .message p {
+        margin-top: 25px;
+        color: #ddd;
+        font-size: 16px;
+        line-height: 1.7;
+        letter-spacing: 2px;
+    }
+
+    /* =========================
+       FINAL BIRTHDAY
+    ========================== */
+
+    .final {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        background:
+            radial-gradient(
+                circle at center,
+                rgba(100,0,0,.25),
+                #000 70%
+            );
+    }
+
+    .hearts {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+    }
+
+    .heart {
+        position: absolute;
+        color: #e51e25;
+        font-size: 20px;
+        animation: float 6s linear infinite;
+        opacity: .6;
+    }
+
+    @keyframes float {
+        from {
+            transform: translateY(100vh) rotate(0);
+            opacity: 0;
+        }
+
+        20% {
+            opacity: .7;
+        }
+
+        to {
+            transform: translateY(-20vh) rotate(360deg);
+            opacity: 0;
+        }
+    }
+
+    .final-content {
+        position: relative;
+        z-index: 2;
+        padding: 30px;
+    }
+
+    .final h1 {
+        font-size: clamp(50px, 10vw, 110px);
+        font-style: italic;
+        line-height: .9;
+        text-transform: uppercase;
+    }
+
+    .champion {
+        color: #e9b84a;
+        font-family: cursive;
+        font-size: clamp(40px, 7vw, 75px);
+        margin: 20px 0;
+    }
+
+    .final p {
+        max-width: 700px;
+        margin: auto;
+        font-size: 15px;
+        line-height: 2;
+        letter-spacing: 4px;
+        color: #ddd;
+    }
+
+    .replay {
+        margin-top: 50px;
+        padding: 14px 35px;
+        background: transparent;
+        color: white;
+        border: 1px solid #777;
+        cursor: pointer;
+        letter-spacing: 4px;
+        transition: .3s;
+    }
+
+    .replay:hover {
+        border-color: #e21c23;
+        color: #e21c23;
+        box-shadow: 0 0 20px rgba(255,0,0,.3);
+    }
+
+    /* =========================
+       FOOTER
+    ========================== */
+
+    footer {
+        background: #000;
+        border-top: 1px solid #222;
+        padding: 25px;
+        text-align: center;
+        font-size: 11px;
+        letter-spacing: 4px;
+        color: #aaa;
+    }
+
+    footer span {
+        color: #e21c23;
+    }
+
+    /* =========================
+       ENGINE ANIMATION
+    ========================== */
+
+    body.started .engine-button {
+        animation: enginePulse .5s infinite alternate;
+    }
+
+    body.started .moving-car {
+        transform: translateX(130vw);
+    }
+
+    @keyframes enginePulse {
+        from {
+            box-shadow: 0 0 10px red;
+        }
+
+        to {
+            box-shadow: 0 0 50px red;
+        }
+    }
+
+    /* =========================
+       MOBILE
+    ========================== */
+
+    @media(max-width: 600px) {
+
+        .ready {
+            letter-spacing: 5px;
+        }
+
+        .birthday-surprise {
+            letter-spacing: 2px;
+        }
+
+        .car {
+            transform: scale(.8);
+        }
+
+        .moving-car {
+            transform: scale(.65);
+            left: -20px;
+        }
+
+        body.started .moving-car {
+            transform: scale(.65) translateX(130vw);
+        }
+
+        .message {
+            text-align: center;
+            margin: 0;
+        }
+
+        .message p {
+            font-size: 13px;
+        }
+
+        .sound-button {
+            top: 15px;
+            left: 15px;
+        }
+    }
+</style>
 </head>
 
 <body>
 
-    <!-- =================================
+<div class="page">
 
-         SCREEN 1
+    <!-- SOUND -->
+    <button class="sound-button" id="soundButton">
+        🔊 SOUND ON
+    </button>
 
-         START ENGINE
+    <!-- HERO -->
+    <section class="hero" id="hero">
 
-    ================================== -->
+        <div class="garage-light left"></div>
+        <div class="garage-light right"></div>
 
-    <section
+        <div class="hero-content">
 
-        id="startScreen"
+            <div class="small-title">HEY...</div>
 
-        class="screen"
+            <div class="ready">
+                READY FOR YOUR
+            </div>
 
-    >
+            <div class="birthday-surprise">
+                BIRTHDAY SURPRISE?
+            </div>
 
-        <div class="content">
+            <!-- CSS CAR -->
+            <div class="car">
 
-            <p class="small-title">
+                <div class="roof"></div>
 
-                A Special Mission • 2026
+                <div class="windshield"></div>
 
-            </p>
+                <div class="car-body"></div>
 
-            <h1>
+                <div class="headlight left"></div>
+                <div class="headlight right"></div>
 
-                Ready for your
+                <div class="grille"></div>
 
-                <span>Birthday Surprise?</span>
-
-            </h1>
-
-            <p class="instruction">
-
-                Turn your sound on<br>
-
-                Start the engine<br>
-
-                Enjoy the ride
-
-            </p>
-
-            <button
-
-                id="startButton"
-
-                class="engine-button"
-
-            >
-
-                START
-
-                <br>
-
-                ENGINE
-
-            </button>
-
-        </div>
-
-        <!-- Simple performance car -->
-
-        <div class="car">
-
-            <div class="headlight left"></div>
-
-            <div class="headlight right"></div>
-
-            <div class="wheel left"></div>
-
-            <div class="wheel right"></div>
-
-        </div>
-
-    </section>
-
-    <!-- =================================
-
-         SCREEN 2
-
-         RACING
-
-    ================================== -->
-
-    <section
-
-        id="raceScreen"
-
-        class="screen hidden"
-
-    >
-
-        <div class="speed">
-
-            <span id="speed">000</span>
-
-            KM/H
-
-        </div>
-
-        <div class="race-message">
-
-            THIS RIDE IS
-
-            <span>
-
-                JUST GETTING STARTED...
-
-            </span>
-
-        </div>
-
-        <div
-
-            id="raceCar"
-
-            class="race-car"
-
-        ></div>
-
-    </section>
-
-    <!-- =================================
-
-         SCREEN 3
-
-         BIRTHDAY
-
-    ================================== -->
-
-    <section
-
-        id="birthdayScreen"
-
-        class="screen hidden"
-
-    >
-
-        <div
-
-            id="confetti"
-
-            class="confetti"
-
-        ></div>
-
-        <div class="birthday-content">
-
-            <p class="small-title">
-
-                Tonight's Main Event
-
-            </p>
-
-            <!-- CHANGE THE NAME HERE -->
-
-            <h2>
-
-                HAPPY
-
-                <span>BIRTHDAY!</span>
-
-            </h2>
-
-            <!-- CHANGE YOUR MESSAGE HERE -->
-
-            <p class="birthday-message">
-
-                Wishing you a year full of
-
-                <strong>
-
-                    speed, success, adventures
-
-                </strong>
-
-                and unforgettable moments.
-
-                <br><br>
-
-                May every new chapter be
-
-                bigger, bolder and better
-
-                than the last.
-
-            </p>
-
-            <p class="champion">
-
-                — For a true champion 🏁
-
-            </p>
-
-            <!-- 2 minute countdown -->
-
-            <div class="timer">
-
-                <span id="minutes">
-
-                    02
-
-                </span>
-
-                :
-
-                <span id="seconds">
-
-                    00
-
-                </span>
+                <div class="wheel left"></div>
+                <div class="wheel right"></div>
 
             </div>
 
-            <p class="timer-text">
+            <button class="engine-button" id="startEngine">
+                START<br>ENGINE
+            </button>
 
-                Enjoy your message...
+            <div class="click-start">
+                CLICK TO START
+            </div>
 
+            <div class="arrow">
+                ↓
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- RIDE -->
+    <section class="surprise section-one">
+
+        <div class="city">
+            <div class="building"></div>
+            <div class="building"></div>
+            <div class="building"></div>
+            <div class="building"></div>
+            <div class="building"></div>
+            <div class="building"></div>
+            <div class="building"></div>
+            <div class="building"></div>
+        </div>
+
+        <div class="moving-car">
+
+            <div class="body"></div>
+
+            <div class="window"></div>
+
+            <div class="tail-light"></div>
+
+            <div class="moving-wheel one"></div>
+            <div class="moving-wheel two"></div>
+
+        </div>
+
+        <div class="road"></div>
+
+        <div class="message">
+
+            <h2>
+                THIS RIDE IS
+                <br>
+                <span class="red">
+                    JUST GETTING
+                    <br>
+                    STARTED...
+                </span>
+            </h2>
+
+        </div>
+
+    </section>
+
+
+    <!-- BIRTHDAY MESSAGE -->
+    <section class="surprise section-two">
+
+        <div class="message">
+
+            <h2>
+                HAPPY
+                <br>
+                <span class="red">
+                    BIRTHDAY!
+                </span>
+            </h2>
+
+            <div class="champion">
+                Champion! ♡
+            </div>
+
+            <p>
+                WISHING YOU A YEAR FULL OF
+                <span class="red">SPEED</span>,
+                SUCCESS, ADVENTURES AND
+                UNFORGETTABLE MOMENTS.
             </p>
 
         </div>
 
     </section>
 
-    <!-- =================================
 
-         SCREEN 4
+    <!-- FINAL ROAD -->
+    <section class="surprise section-three">
 
-         FINAL
+        <div class="road"></div>
 
-    ================================== -->
+        <div class="moving-car">
 
-    <section
+            <div class="body"></div>
 
-        id="finalScreen"
+            <div class="window"></div>
 
-        class="screen hidden"
+            <div class="tail-light"></div>
 
-    >
+            <div class="moving-wheel one"></div>
+            <div class="moving-wheel two"></div>
+
+        </div>
+
+        <div class="message">
+
+            <h2>
+                YOUR BEST LAP
+                <br>
+                <span class="red">
+                    IS YET TO COME.
+                </span>
+            </h2>
+
+        </div>
+
+    </section>
+
+
+    <!-- FINAL BIRTHDAY SCREEN -->
+    <section class="final">
+
+        <div class="hearts">
+
+            <div class="heart" style="left:10%; animation-delay:0s;">♥</div>
+            <div class="heart" style="left:25%; animation-delay:2s;">♥</div>
+            <div class="heart" style="left:45%; animation-delay:1s;">♥</div>
+            <div class="heart" style="left:65%; animation-delay:3s;">♥</div>
+            <div class="heart" style="left:80%; animation-delay:1.5s;">♥</div>
+            <div class="heart" style="left:90%; animation-delay:4s;">♥</div>
+
+        </div>
 
         <div class="final-content">
 
-            <p class="small-title">
+            <h1>
+                HAPPY
+                <br>
+                <span class="red">
+                    BIRTHDAY!
+                </span>
+            </h1>
 
-                Keep Driving Forward
+            <div class="champion">
+                Champion! ♡
+            </div>
 
+            <p>
+                WISHING YOU A YEAR FULL OF
+                SPEED, SUCCESS, ADVENTURES
+                AND UNFORGETTABLE MOMENTS.
             </p>
 
-            <h2>
-
-                YOUR BEST LAP
-
-                <span>
-
-                    IS YET TO COME.
-
-                </span>
-
-            </h2>
-
-            <button
-
-                id="replayButton"
-
-                class="replay-button"
-
-            >
-
-                ↻ &nbsp;
-
-                REPLAY
-
+            <button class="replay" id="replay">
+                ↻ &nbsp; REPLAY
             </button>
 
         </div>
 
-        <div class="final-car"></div>
-
-        <p class="footer">
-
-            Buckle up for an
-
-            <span>incredible</span>
-
-            year ahead! 🏁
-
-        </p>
-
     </section>
 
-    <script src="script.js"></script>
+
+    <footer>
+        BUCKLE UP FOR AN
+        <span>INCREDIBLE YEAR AHEAD!</span>
+        🏁
+    </footer>
+
+</div>
+
+
+<!-- OPTIONAL MUSIC -->
+<audio id="engineSound" preload="auto">
+    <!--
+    Put your sound file here:
+
+    <source src="engine.mp3" type="audio/mpeg">
+    -->
+</audio>
+
+
+<script>
+
+    const startButton =
+        document.getElementById("startEngine");
+
+    const replayButton =
+        document.getElementById("replay");
+
+    const soundButton =
+        document.getElementById("soundButton");
+
+    const engineSound =
+        document.getElementById("engineSound");
+
+
+    /* =========================
+       START ENGINE
+    ========================== */
+
+    startButton.addEventListener("click", function () {
+
+        document.body.classList.add("started");
+
+        /*
+           Play sound if an audio file
+           has been added.
+        */
+
+        if (engineSound.src) {
+
+            engineSound.currentTime = 0;
+
+            engineSound.play().catch(() => {});
+
+        }
+
+        setTimeout(function () {
+
+            document.querySelector(".section-one")
+                .scrollIntoView({
+                    behavior: "smooth"
+                });
+
+        }, 700);
+
+    });
+
+
+    /* =========================
+       SOUND BUTTON
+    ========================== */
+
+    let soundOn = true;
+
+    soundButton.addEventListener("click", function () {
+
+        soundOn = !soundOn;
+
+        if (soundOn) {
+
+            soundButton.innerHTML =
+                "🔊 SOUND ON";
+
+            engineSound.muted = false;
+
+        } else {
+
+            soundButton.innerHTML =
+                "🔇 SOUND OFF";
+
+            engineSound.muted = true;
+
+        }
+
+    });
+
+
+    /* =========================
+       REPLAY
+    ========================== */
+
+    replayButton.addEventListener("click", function () {
+
+        document.body.classList.remove("started");
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    });
+
+</script>
 
 </body>
-
 </html>
