@@ -1,328 +1,674 @@
-/*
-  app.js
-  Sequence:
-  START -> engine sound + car moves slowly -> speed increases -> show HAPPY BIRTHDAY -> victory sound + confetti -> 2-min countdown -> final message -> Replay
-  Friend name: change FRIEND_NAME below or modify page text dynamically.
-*/
+/* =========================================
+   GET HTML ELEMENTS
+========================================= */
 
-const FRIEND_NAME = ""; // e.g. "Sam" — set this to personalize
+const startScreen =
+    document.getElementById("startScreen");
 
-// Elements
-const startBtn = document.getElementById('startBtn');
-const replayBtn = document.getElementById('replayBtn');
-const carEl = document.getElementById('car');
-const overlay = document.getElementById('overlay');
-const hbText = document.getElementById('hbText');
-const countdownEl = document.getElementById('countdown');
-const finalMsg = document.getElementById('finalMsg');
-const motionLines = document.getElementById('motion-lines');
+const raceScreen =
+    document.getElementById("raceScreen");
 
-if (FRIEND_NAME && FRIEND_NAME.trim().length) {
-  hbText.textContent = `HAPPY BIRTHDAY ${FRIEND_NAME.toUpperCase()} 🎉`;
-} else {
-  hbText.textContent = `HAPPY BIRTHDAY 🎉`;
-}
+const birthdayScreen =
+    document.getElementById("birthdayScreen");
 
-// Audio setup using Web Audio API (synthesized engine and victory)
-let audioCtx = null;
-let engineOsc = null;
-let engineGain = null;
-let engineRunning = false;
+const finalScreen =
+    document.getElementById("finalScreen");
 
-// Timing parameters
-const SPEED_RAMP_DURATION = 6000; // ms to ramp to full speed
-const INITIAL_SPEED = 0.12; // relative units
-const MAX_SPEED = 1.0; // relative units (affects car travel)
-const TOTAL_TRAVEL = 0.86; // fraction of track width the car travels (from left to almost right)
-const COUNTDOWN_SECONDS = 120; // 2-minute countdown
+const startButton =
+    document.getElementById("startButton");
 
-let animationState = {
-  startTime: null,
-  lastTimestamp: null,
-  speedFactor: INITIAL_SPEED,
-  running: false,
-  progress: 0 // 0..1 across TOTAL_TRAVEL
-};
+const replayButton =
+    document.getElementById("replayButton");
 
-function ensureAudioContext(){
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-}
+const speedElement =
+    document.getElementById("speed");
 
-function startEngineSynth(){
-  ensureAudioContext();
-  if (engineRunning) return;
-  engineOsc = audioCtx.createOscillator();
-  engineGain = audioCtx.createGain();
+const minutesElement =
+    document.getElementById("minutes");
 
-  // Use sawtooth for gritty engine sound, small detune for character
-  engineOsc.type = 'sawtooth';
-  engineOsc.frequency.value = 90; // base freq - modulated to simulate revs
-  engineOsc.detune.value = -6;
+const secondsElement =
+    document.getElementById("seconds");
 
-  // Add subtle LFO to frequency to simulate vibration
-  const lfo = audioCtx.createOscillator();
-  lfo.type = 'sine';
-  lfo.frequency.value = 6; // 6Hz wobble
-  const lfoGain = audioCtx.createGain();
-  lfoGain.gain.value = 10;
-  lfo.connect(lfoGain);
-  lfoGain.connect(engineOsc.frequency);
+const confetti =
+    document.getElementById("confetti");
 
-  // Lowpass filter to shape tone
-  const filter = audioCtx.createBiquadFilter();
-  filter.type = 'lowpass';
-  filter.frequency.value = 1200;
 
-  engineOsc.connect(filter);
-  filter.connect(engineGain);
-  engineGain.connect(audioCtx.destination);
+/* =========================================
+   VARIABLES
+========================================= */
 
-  engineGain.gain.value = 0.0; // start silent and ramp in
-  engineOsc.start();
-  lfo.start();
+let speedTimer;
 
-  engineRunning = true;
+let countdownTimer;
 
-  // Ramp gain to a comfortable level quickly
-  engineGain.gain.cancelScheduledValues(audioCtx.currentTime);
-  engineGain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 0.3);
-}
+let birthdayTimer;
 
-function stopEngineSynth(){
-  if (!engineRunning) return;
-  // smooth fade-out
-  engineGain.gain.cancelScheduledValues(audioCtx.currentTime);
-  engineGain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
-  setTimeout(() => {
-    try{
-      engineOsc.stop();
-    }catch(e){}
-    engineOsc.disconnect();
-    engineGain.disconnect();
-    engineOsc = null;
-    engineGain = null;
-    engineRunning = false;
-  }, 700);
-}
+let started = false;
 
-// Play a short victory melody using oscillator
-function playVictory(){
-  ensureAudioContext();
-  const now = audioCtx.currentTime;
-  const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6
-  const dur = 0.18;
-  const g = audioCtx.createGain();
-  g.gain.value = 0.0;
-  g.connect(audioCtx.destination);
 
-  const filter = audioCtx.createBiquadFilter();
-  filter.type = 'lowpass';
-  filter.frequency.value = 2500;
-  g.connect(filter);
-  filter.connect(audioCtx.destination);
+/* =========================================
+   ENGINE SOUND
+========================================= */
 
-  notes.forEach((freq, i) => {
-    const o = audioCtx.createOscillator();
-    o.type = 'triangle';
-    o.frequency.value = freq;
-    o.connect(g);
-    o.start(now + i * dur * 1.1);
-    o.stop(now + (i+1) * dur * 1.1);
-  });
+function playEngineSound() {
 
-  // short envelope
-  g.gain.linearRampToValueAtTime(0.18, now + 0.02);
-  g.gain.linearRampToValueAtTime(0.0, now + notes.length * dur * 1.1 + 0.12);
-}
+    try {
 
-// Confetti burst wrapper
-function launchConfetti(){
-  if (typeof confetti === 'function') {
-    confetti({
-      particleCount: 150,
-      spread: 70,
-      origin: { y: 0.3 },
-      colors: ['#ff2b2b', '#ffb3b3', '#a70000', '#ffffff']
-    });
-    confetti({
-      particleCount: 90,
-      spread: 120,
-      origin: { y: 0.6 },
-      colors: ['#ff2b2b', '#a70000', '#fff100']
-    });
-  }
-}
+        const AudioContext =
+            window.AudioContext ||
+            window.webkitAudioContext;
 
-// Car movement animation
-function updateAnimation(timestamp){
-  if (!animationState.running) return;
-  if (!animationState.startTime) {
-    animationState.startTime = timestamp;
-    animationState.lastTimestamp = timestamp;
-  }
-  const elapsed = timestamp - animationState.startTime;
+        const audio =
+            new AudioContext();
 
-  // Ramp speedFactor from INITIAL_SPEED to MAX_SPEED over SPEED_RAMP_DURATION
-  const t = Math.min(elapsed / SPEED_RAMP_DURATION, 1.0);
-  animationState.speedFactor = INITIAL_SPEED + (MAX_SPEED - INITIAL_SPEED) * t;
+        const oscillator =
+            audio.createOscillator();
 
-  // Progress increments based on speedFactor and delta time
-  const dt = Math.min(timestamp - animationState.lastTimestamp, 50);
-  const travelDelta = (animationState.speedFactor * dt) / 20000; // tuned constant
-  animationState.progress = Math.min(animationState.progress + travelDelta, 1.0);
+        const gain =
+            audio.createGain();
 
-  // Map progress to translateX percentage; start from 4% left to TOTAL_TRAVEL (fraction)
-  const startX = 4; // percent
-  const endX = 4 + TOTAL_TRAVEL * 100; // percent
-  const x = startX + (endX - startX) * animationState.progress;
-  // also scale the car a little while speeding for dramatic effect
-  const scale = 1 + (animationState.speedFactor - INITIAL_SPEED) * 0.18;
 
-  carEl.style.transform = `translateX(${x}%) scale(${scale})`;
+        oscillator.type = "sawtooth";
 
-  // Adjust engine frequency with speedFactor
-  if (engineOsc) {
-    engineOsc.frequency.setTargetAtTime(90 + animationState.speedFactor * 160, audioCtx.currentTime, 0.08);
-    // adjust filter or gain to simulate rev
-    if (engineGain) {
-      engineGain.gain.setTargetAtTime(0.09 + animationState.speedFactor * 0.06, audioCtx.currentTime, 0.06);
+
+        oscillator.frequency.setValueAtTime(
+            70,
+            audio.currentTime
+        );
+
+
+        gain.gain.setValueAtTime(
+            0.01,
+            audio.currentTime
+        );
+
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.15,
+            audio.currentTime + 0.2
+        );
+
+
+        oscillator.frequency.exponentialRampToValueAtTime(
+            220,
+            audio.currentTime + 2
+        );
+
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.001,
+            audio.currentTime + 3
+        );
+
+
+        oscillator.connect(gain);
+
+        gain.connect(audio.destination);
+
+
+        oscillator.start();
+
+        oscillator.stop(
+            audio.currentTime + 3
+        );
+
     }
-  }
 
-  animationState.lastTimestamp = timestamp;
+    catch (error) {
 
-  // if reached near end, clamp
-  if (animationState.progress < 1.0) {
-    requestAnimationFrame(updateAnimation);
-  }
-}
+        console.log(
+            "Audio is not supported."
+        );
 
-// Sequence orchestrator
-async function runSequence(){
-  // reset states
-  overlay.classList.add('hidden');
-  finalMsg.classList.add('hidden');
-  countdownEl.classList.add('hidden');
-  replayBtn.hidden = true;
-  startBtn.disabled = true;
-
-  // Start engine and car motion
-  startEngineSynth();
-  animationState.running = true;
-  animationState.startTime = null;
-  animationState.lastTimestamp = null;
-  animationState.progress = 0;
-  requestAnimationFrame(updateAnimation);
-
-  // Make motion lines visible and pulse for speed sensation
-  motionLines.style.opacity = '0.75';
-  motionLines.animate([{opacity:0.4},{opacity:0.9},{opacity:0.4}], {duration:1200, iterations:Infinity});
-
-  // Ramp period: wait for SPEED_RAMP_DURATION, then show birthday message and victory
-  await wait(SPEED_RAMP_DURATION);
-
-  // Show HAPPY BIRTHDAY
-  overlay.classList.remove('hidden');
-  overlay.style.pointerEvents = 'auto';
-
-  // Play victory sound and confetti
-  playVictory();
-  launchConfetti();
-
-  // Stop engine after a short time so victory is clearer
-  setTimeout(stopEngineSynth, 1000);
-
-  // Start 2-minute countdown
-  countdownEl.classList.remove('hidden');
-  startCountdown(COUNTDOWN_SECONDS, countdownEl, () => {
-    // On finish of countdown
-    finalMsg.classList.remove('hidden');
-    replayBtn.hidden = false;
-    animationState.running = false;
-    startBtn.disabled = false;
-    motionLines.style.opacity = '0';
-  });
-
-  // The overlay (birthday) fades away after a few seconds but can stay a bit
-  setTimeout(() => {
-    overlay.classList.add('hidden');
-    overlay.style.pointerEvents = 'none';
-  }, 5000);
-}
-
-function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
-
-// Countdown display
-function startCountdown(totalSeconds, displayEl, onDone){
-  let remaining = totalSeconds;
-  displayEl.textContent = formatTime(remaining);
-  const interval = setInterval(() => {
-    remaining--;
-    if (remaining < 0) {
-      clearInterval(interval);
-      displayEl.textContent = '00:00';
-      if (onDone) onDone();
-      return;
     }
-    displayEl.textContent = formatTime(remaining);
-  }, 1000);
+
 }
 
-// Helper: mm:ss
-function formatTime(sec){
-  const m = Math.floor(sec/60).toString().padStart(2,'0');
-  const s = (sec % 60).toString().padStart(2,'0');
-  return `${m}:${s}`;
+
+/* =========================================
+   VICTORY SOUND
+========================================= */
+
+function playVictorySound() {
+
+    try {
+
+        const AudioContext =
+            window.AudioContext ||
+            window.webkitAudioContext;
+
+        const audio =
+            new AudioContext();
+
+
+        /*
+           First note
+        */
+
+        playNote(
+            audio,
+            523,
+            0,
+            0.25
+        );
+
+
+        /*
+           Second note
+        */
+
+        playNote(
+            audio,
+            659,
+            0.18,
+            0.25
+        );
+
+
+        /*
+           Third note
+        */
+
+        playNote(
+            audio,
+            784,
+            0.36,
+            0.35
+        );
+
+
+        /*
+           Fourth high note
+        */
+
+        playNote(
+            audio,
+            1046,
+            0.55,
+            0.5
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.log(
+            "Victory sound unavailable."
+        );
+
+    }
+
 }
 
-// Replay resets UI
-function resetAll(){
-  // reset audio
-  stopEngineSynth();
-  // reset animation
-  animationState.running = false;
-  animationState.progress = 0;
-  animationState.startTime = null;
-  animationState.lastTimestamp = null;
-  carEl.style.transform = `translateX(4%) scale(1)`;
-  overlay.classList.add('hidden');
-  finalMsg.classList.add('hidden');
-  countdownEl.classList.add('hidden');
-  replayBtn.hidden = true;
-  startBtn.disabled = false;
-  motionLines.style.opacity = '0';
+
+/* =========================================
+   PLAY ONE SOUND NOTE
+========================================= */
+
+function playNote(
+    audio,
+    frequency,
+    delay,
+    duration
+) {
+
+    const oscillator =
+        audio.createOscillator();
+
+    const gain =
+        audio.createGain();
+
+
+    oscillator.type =
+        "triangle";
+
+
+    oscillator.frequency.value =
+        frequency;
+
+
+    gain.gain.setValueAtTime(
+        0.001,
+        audio.currentTime + delay
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.25,
+        audio.currentTime + delay + 0.03
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        audio.currentTime + delay + duration
+    );
+
+
+    oscillator.connect(gain);
+
+    gain.connect(audio.destination);
+
+
+    oscillator.start(
+        audio.currentTime + delay
+    );
+
+
+    oscillator.stop(
+        audio.currentTime +
+        delay +
+        duration
+    );
+
 }
 
-// UI handlers
-startBtn.addEventListener('click', async () => {
-  // Some browsers require resume after user gesture
-  ensureAudioContext();
-  if (audioCtx && audioCtx.state === 'suspended') {
-    try { await audioCtx.resume(); } catch(e){}
-  }
-  runSequence();
-});
 
-replayBtn.addEventListener('click', () => {
-  resetAll();
-});
+/* =========================================
+   CREATE CONFETTI
+========================================= */
 
-// initialize layout state
-resetAll();
+function createConfetti() {
+
+    confetti.innerHTML = "";
 
 
-// Accessibility: allow keyboard start with Enter/Space when focused
-startBtn.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    startBtn.click();
-  }
-});
-replayBtn.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    replayBtn.click();
-  }
-});
+    for (
+        let i = 0;
+        i < 80;
+        i++
+    ) {
+
+        const piece =
+            document.createElement("div");
+
+
+        piece.className =
+            "confetti-piece";
+
+
+        piece.style.left =
+            Math.random() * 100 + "%";
+
+
+        piece.style.top =
+            -Math.random() * 100 + "%";
+
+
+        piece.style.animationDelay =
+            Math.random() * 2 + "s";
+
+
+        piece.style.animationDuration =
+            3 + Math.random() * 3 + "s";
+
+
+        confetti.appendChild(
+            piece
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   RESET COUNTDOWN
+========================================= */
+
+function resetCountdown() {
+
+    clearInterval(
+        countdownTimer
+    );
+
+
+    minutesElement.textContent =
+        "02";
+
+
+    secondsElement.textContent =
+        "00";
+
+}
+
+
+/* =========================================
+   START TWO-MINUTE COUNTDOWN
+========================================= */
+
+function startCountdown() {
+
+    let remainingSeconds =
+        120;
+
+
+    countdownTimer =
+        setInterval(
+            function () {
+
+                remainingSeconds--;
+
+
+                const minutes =
+                    Math.floor(
+                        remainingSeconds / 60
+                    );
+
+
+                const seconds =
+                    remainingSeconds % 60;
+
+
+                minutesElement.textContent =
+                    String(minutes)
+                        .padStart(2, "0");
+
+
+                secondsElement.textContent =
+                    String(seconds)
+                        .padStart(2, "0");
+
+
+                if (
+                    remainingSeconds <= 0
+                ) {
+
+                    clearInterval(
+                        countdownTimer
+                    );
+
+                }
+
+            },
+
+            1000
+        );
+
+}
+
+
+/* =========================================
+   SHOW BIRTHDAY SCREEN
+========================================= */
+
+function showBirthday() {
+
+    raceScreen.classList.add(
+        "hidden"
+    );
+
+
+    birthdayScreen.classList.remove(
+        "hidden"
+    );
+
+
+    /*
+       Celebration!
+    */
+
+    playVictorySound();
+
+
+    /*
+       Confetti
+    */
+
+    createConfetti();
+
+
+    /*
+       Start 2-minute timer
+    */
+
+    resetCountdown();
+
+    startCountdown();
+
+
+    /*
+       Move to final screen
+       after 2 minutes
+    */
+
+    birthdayTimer =
+        setTimeout(
+            function () {
+
+                showFinalScreen();
+
+            },
+            120000
+        );
+
+}
+
+
+/* =========================================
+   SHOW FINAL SCREEN
+========================================= */
+
+function showFinalScreen() {
+
+    clearInterval(
+        countdownTimer
+    );
+
+
+    birthdayScreen.classList.add(
+        "hidden"
+    );
+
+
+    finalScreen.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* =========================================
+   START EXPERIENCE
+========================================= */
+
+function startExperience() {
+
+    if (started) {
+
+        return;
+
+    }
+
+
+    started = true;
+
+
+    /*
+       Play engine sound
+    */
+
+    playEngineSound();
+
+
+    /*
+       Hide start screen
+    */
+
+    startScreen.classList.add(
+        "hidden"
+    );
+
+
+    /*
+       Show racing screen
+    */
+
+    raceScreen.classList.remove(
+        "hidden"
+    );
+
+
+    /*
+       Reset speed
+    */
+
+    let currentSpeed = 0;
+
+
+    speedElement.textContent =
+        "000";
+
+
+    /*
+       Animate speed
+    */
+
+    speedTimer =
+        setInterval(
+            function () {
+
+                currentSpeed +=
+                    Math.floor(
+                        Math.random() * 20
+                    ) + 15;
+
+
+                if (
+                    currentSpeed >= 287
+                ) {
+
+                    currentSpeed = 287;
+
+                    clearInterval(
+                        speedTimer
+                    );
+
+                }
+
+
+                speedElement.textContent =
+                    String(currentSpeed)
+                        .padStart(3, "0");
+
+            },
+
+            120
+        );
+
+
+    /*
+       Race lasts about 3.8 seconds
+    */
+
+    setTimeout(
+        function () {
+
+            clearInterval(
+                speedTimer
+            );
+
+
+            showBirthday();
+
+        },
+
+        3800
+    );
+
+}
+
+
+/* =========================================
+   REPLAY
+========================================= */
+
+function replayExperience() {
+
+    /*
+       Stop all timers
+    */
+
+    clearInterval(
+        speedTimer
+    );
+
+    clearInterval(
+        countdownTimer
+    );
+
+    clearTimeout(
+        birthdayTimer
+    );
+
+
+    /*
+       Reset state
+    */
+
+    started = false;
+
+
+    /*
+       Reset screens
+    */
+
+    startScreen.classList.remove(
+        "hidden"
+    );
+
+
+    raceScreen.classList.add(
+        "hidden"
+    );
+
+
+    birthdayScreen.classList.add(
+        "hidden"
+    );
+
+
+    finalScreen.classList.add(
+        "hidden"
+    );
+
+
+    /*
+       Reset speed
+    */
+
+    speedElement.textContent =
+        "000";
+
+
+    /*
+       Reset countdown
+    */
+
+    resetCountdown();
+
+
+    /*
+       Remove old confetti
+    */
+
+    confetti.innerHTML = "";
+
+}
+
+
+/* =========================================
+   BUTTON EVENTS
+========================================= */
+
+startButton.addEventListener(
+    "click",
+    startExperience
+);
+
+
+replayButton.addEventListener(
+    "click",
+    replayExperience
+);
