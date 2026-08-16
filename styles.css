@@ -1,0 +1,91 @@
+:root{
+  --bg:#0b0b0b;
+  --red:#ff2b2b;
+  --dark-red:#a70000;
+  --muted:#bdbdbd;
+  --glass: rgba(255,255,255,0.04);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+.theme{background:linear-gradient(180deg,var(--bg) 0%, #070707 100%); color:#fff; display:flex; align-items:center; justify-content:center; padding:20px;}
+.container{width:min(980px,96%);}
+
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+header h1{margin:0;color:var(--red);letter-spacing:1px}
+
+.track{
+  position:relative;
+  background:linear-gradient(90deg,#121212 0%, #0a0a0a 100%);
+  border-radius:12px;
+  height:220px;
+  overflow:hidden;
+  border:2px solid rgba(255,0,0,0.06);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+
+.car{
+  position:absolute;
+  left:4%;
+  top:40%;
+  width:260px;
+  transform:translateX(0) scale(1);
+  transition:transform 0.25s linear;
+  will-change:transform;
+}
+
+.motion-lines{
+  position:absolute;
+  inset:0;
+  background-image:linear-gradient(transparent 0 50%, rgba(255,255,255,0.02) 50%),
+                    linear-gradient(90deg, rgba(0,0,0,0.35), rgba(0,0,0,0));
+  mix-blend-mode:overlay;
+  pointer-events:none;
+  opacity:0.6;
+}
+
+.controls{margin-top:16px;display:flex;gap:12px;align-items:center}
+.btn{background:var(--glass);border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:10px 14px;border-radius:8px;cursor:pointer;font-weight:600}
+.btn.primary{background:linear-gradient(90deg,var(--red),var(--dark-red)); color:white; border:none; box-shadow: 0 6px 20px rgba(167,0,0,0.18)}
+
+.overlay{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;
+}
+.overlay .birthday-msg{
+  background:linear-gradient(180deg, rgba(255,43,43,0.12), rgba(167,0,0,0.06));
+  border-radius:14px;
+  padding:28px 36px;
+  text-align:center;
+  backdrop-filter: blur(6px);
+  border:1px solid rgba(255,255,255,0.04);
+  box-shadow:0 10px 40px rgba(167,0,0,0.12);
+  pointer-events:auto;
+}
+.birthday-msg h2{margin:0;font-size:36px;color:#fff; text-shadow: 0 4px 18px rgba(167,0,0,0.45)}
+.birthday-msg .sparkles{font-size:28px;margin-bottom:8px}
+
+.hidden{display:none !important}
+
+.countdown{
+  margin-top:12px;
+  font-size:20px;
+  background:linear-gradient(90deg, rgba(0,0,0,0.35), rgba(0,0,0,0.2));
+  display:inline-block;
+  padding:8px 14px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.04);
+  color:var(--muted);
+}
+
+.final-msg{
+  margin-top:18px;
+  background:linear-gradient(90deg,#111, #0b0b0b);
+  padding:12px 14px;
+  border-radius:8px;
+  color:#ffd;
+  border:1px solid rgba(255,0,0,0.06);
+  text-align:center;
+  font-weight:700;
+}
+
+footer{margin-top:14px;color:var(--muted);font-size:13px}
