@@ -773,7 +773,7 @@
             </h2>
 
             <div class="champion">
-                Champion! ♡
+                Champion!
             </div>
 
             <p>
@@ -928,6 +928,27 @@
                 });
 
         }, 10);
+
+        setTimeout(function () {
+
+            document.querySelector(".section-two")
+                .scrollIntoView({
+                    behavior: "smooth",
+                   block:"Start"
+                });
+
+        }, 5000);
+
+        setTimeout(function () {
+
+            document.querySelector(".section-three")
+                .scrollIntoView({
+                    behavior: "smooth",
+                   block:"Start"
+                });
+
+        }, 5000);
+
 
     });
 
