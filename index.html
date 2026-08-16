@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Birthday Race</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="theme">
+  <div class="container">
+    <header>
+      <h1>Birthday Race</h1>
+    </header>
+
+    <main>
+      <div id="track" class="track" aria-hidden="false">
+        <div id="car" class="car" aria-hidden="true">
+          <!-- Simple SVG racing car -->
+          <svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1">
+                <stop offset="0" stop-color="#ff3b3b"/>
+                <stop offset="1" stop-color="#a70000"/>
+              </linearGradient>
+              <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000" flood-opacity="0.45"/>
+              </filter>
+            </defs>
+            <g filter="url(#shadow)">
+              <rect x="10" y="25" rx="12" ry="12" width="160" height="30" fill="url(#g1)"/>
+              <path d="M40 25 q20 -20 60 -12 l28 12" fill="#8b0000"/>
+              <circle cx="55" cy="58" r="8" fill="#111"/>
+              <circle cx="145" cy="58" r="8" fill="#111"/>
+              <circle cx="55" cy="58" r="4" fill="#b9b9b9"/>
+              <circle cx="145" cy="58" r="4" fill="#b9b9b9"/>
+            </g>
+          </svg>
+        </div>
+
+        <div id="motion-lines" class="motion-lines" aria-hidden="true"></div>
+      </div>
+
+      <div id="controls" class="controls">
+        <button id="startBtn" class="btn primary">START ENGINE</button>
+        <button id="replayBtn" class="btn" hidden>Replay 🔄</button>
+      </div>
+
+      <div id="overlay" class="overlay hidden">
+        <div id="birthdayMsg" class="birthday-msg">
+          <div class="sparkles">🎉</div>
+          <h2 id="hbText">HAPPY BIRTHDAY!</h2>
+        </div>
+      </div>
+
+      <div id="countdown" class="countdown hidden" aria-live="polite">02:00</div>
+
+      <div id="finalMsg" class="final-msg hidden">You crossed the finish line — Happy Birthday! 🏁</div>
+    </main>
+
+    <footer>
+      <small>Black & Red racing theme • Click START to enable sound (required by browsers)</small>
+    </footer>
+  </div>
+
+  <!-- confetti lib -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
