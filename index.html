@@ -1,69 +1,1386 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Birthday Race</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#030303" />
+
+  <title>Birthday Racing Surprise</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --red: #ff1838;
+      --dark-red: #a80018;
+      --white: #f7f7f7;
+      --gray: #9da0a6;
+      --black: #030303;
+    }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: Arial, Helvetica, sans-serif;
+      overflow: hidden;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    /* =========================
+       COMMON SCREEN
+    ========================= */
+
+    .screen {
+      width: 100%;
+      height: 100svh;
+      min-height: 600px;
+      position: relative;
+      overflow: hidden;
+
+      display: grid;
+      place-items: center;
+
+      background:
+        radial-gradient(
+          circle at 50% 45%,
+          rgba(255, 24, 56, 0.12),
+          transparent 35%
+        ),
+        linear-gradient(
+          #020202,
+          #090a0c 60%,
+          #020202
+        );
+    }
+
+    /* =========================
+       INTRO SCREEN
+    ========================= */
+
+    #hero {
+      display: grid;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 25px;
+    }
+
+    .kicker {
+      color: var(--red);
+      font-size: 12px;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: clamp(40px, 10vw, 90px);
+      line-height: 0.9;
+      font-style: italic;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .hero-title span {
+      color: var(--red);
+      display: block;
+    }
+
+    .subtitle {
+      color: #aaa;
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin: 25px 0 30px;
+    }
+
+    /* =========================
+       ENGINE BUTTON
+    ========================= */
+
+    .engine-button {
+      width: 145px;
+      height: 145px;
+
+      border-radius: 50%;
+
+      border: 2px solid var(--red);
+
+      background:
+        radial-gradient(
+          circle,
+          #1a1a1a 0%,
+          #050505 55%
+        );
+
+      color: white;
+
+      cursor: pointer;
+
+      font-size: 15px;
+      font-weight: 900;
+
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+
+      box-shadow:
+        0 0 0 8px rgba(255, 24, 56, 0.08),
+        0 0 40px rgba(255, 24, 56, 0.3);
+
+      transition: 0.3s;
+    }
+
+    .engine-button:hover {
+      transform: scale(1.05);
+
+      box-shadow:
+        0 0 0 12px rgba(255, 24, 56, 0.08),
+        0 0 60px rgba(255, 24, 56, 0.5);
+    }
+
+    .engine-button:active {
+      transform: scale(0.95);
+    }
+
+    /* =========================
+       CAR
+    ========================= */
+
+    .car-container {
+      position: absolute;
+
+      bottom: 8%;
+      left: 50%;
+
+      transform: translateX(-50%);
+
+      width: min(800px, 95vw);
+      height: 280px;
+
+      z-index: 5;
+    }
+
+    .car {
+      position: absolute;
+
+      left: 50%;
+      bottom: 30px;
+
+      transform: translateX(-50%);
+
+      width: 72%;
+      height: 105px;
+
+      border-radius:
+        45% 48% 12% 12%
+        /
+        55% 60% 25% 25%;
+
+      background:
+        linear-gradient(
+          180deg,
+          #292b2f,
+          #050505 70%
+        );
+
+      border: 1px solid #505358;
+
+      box-shadow:
+        0 25px 50px #000,
+        inset 0 4px 10px #555;
+    }
+
+    /* Roof */
+
+    .car::before {
+      content: "";
+
+      position: absolute;
+
+      left: 22%;
+      top: -55px;
+
+      width: 56%;
+      height: 80px;
+
+      background:
+        linear-gradient(
+          180deg,
+          #181a1d,
+          #030303
+        );
+
+      clip-path:
+        polygon(
+          18% 100%,
+          29% 0,
+          71% 0,
+          82% 100%
+        );
+
+      border: 1px solid #4c4f53;
+    }
+
+    /* Windshield */
+
+    .car::after {
+      content: "";
+
+      position: absolute;
+
+      left: 29%;
+      top: -37px;
+
+      width: 42%;
+      height: 43px;
+
+      background:
+        linear-gradient(
+          120deg,
+          rgba(150,190,210,0.5),
+          rgba(4,7,10,0.95)
+        );
+
+      clip-path:
+        polygon(
+          18% 100%,
+          29% 0,
+          71% 0,
+          82% 100%
+        );
+
+      opacity: 0.7;
+    }
+
+    /* Headlights */
+
+    .headlight {
+      position: absolute;
+
+      top: 28px;
+
+      width: 125px;
+      height: 14px;
+
+      border-radius: 50%;
+
+      background: #ecf9ff;
+
+      filter: blur(3px);
+
+      box-shadow:
+        0 0 25px 8px
+        rgba(210,240,255,0.7);
+    }
+
+    .headlight.left {
+      left: 7%;
+    }
+
+    .headlight.right {
+      right: 7%;
+    }
+
+    /* Grille */
+
+    .grille {
+      position: absolute;
+
+      top: 30px;
+      left: 44%;
+
+      width: 12%;
+      height: 50px;
+
+      border-radius: 12px;
+
+      background:
+        repeating-linear-gradient(
+          90deg,
+          #050505 0 5px,
+          #222 6px 8px
+        );
+
+      border: 1px solid #303236;
+    }
+
+    /* Wheels */
+
+    .wheel {
+      position: absolute;
+
+      bottom: -27px;
+
+      width: 82px;
+      height: 82px;
+
+      border-radius: 50%;
+
+      background: #020202;
+
+      border: 10px solid #17191c;
+
+      box-shadow:
+        inset 0 0 0 5px #3b3d40,
+        0 8px 12px #000;
+    }
+
+    .wheel.left {
+      left: 13%;
+    }
+
+    .wheel.right {
+      right: 13%;
+    }
+
+    /* =========================
+       ROAD
+    ========================= */
+
+    .road {
+      position: absolute;
+
+      bottom: 0;
+      left: 0;
+
+      width: 100%;
+      height: 30%;
+
+      background:
+        linear-gradient(
+          transparent,
+          #0b0b0d
+        );
+    }
+
+    .red-line {
+      position: absolute;
+
+      left: 0;
+      right: 0;
+
+      bottom: 13%;
+
+      height: 1px;
+
+      background: var(--red);
+
+      box-shadow:
+        0 0 20px var(--red);
+
+      opacity: 0.5;
+    }
+
+    /* =========================
+       RACING SCREEN
+    ========================= */
+
+    #race {
+      display: none;
+
+      background:
+        radial-gradient(
+          circle at 50% 55%,
+          rgba(255,24,56,0.16),
+          transparent 30%
+        ),
+        linear-gradient(
+          #071019,
+          #020304 75%
+        );
+    }
+
+    #race.active {
+      display: grid;
+    }
+
+    .speed {
+      position: absolute;
+
+      top: 25px;
+      right: 25px;
+
+      color: var(--red);
+
+      font-size: 22px;
+
+      font-weight: 900;
+
+      font-style: italic;
+
+      letter-spacing: 0.1em;
+    }
+
+    .race-title {
+      position: relative;
+
+      z-index: 10;
+
+      text-align: center;
+
+      font-size: clamp(
+        30px,
+        7vw,
+        70px
+      );
+
+      line-height: 0.95;
+
+      font-style: italic;
+
+      font-weight: 900;
+
+      text-transform: uppercase;
+    }
+
+    .race-title span {
+      color: var(--red);
+    }
+
+    /* Racing road */
+
+    .track {
+      position: absolute;
+
+      bottom: 0;
+
+      width: 100%;
+      height: 65%;
+
+      background:
+        linear-gradient(
+          90deg,
+          #060708,
+          #181a1d 50%,
+          #060708
+        );
+
+      clip-path:
+        polygon(
+          35% 0,
+          65% 0,
+          100% 100%,
+          0 100%
+        );
+    }
+
+    .track::after {
+      content: "";
+
+      position: absolute;
+
+      left: 50%;
+
+      top: 0;
+      bottom: 0;
+
+      width: 5px;
+
+      background:
+        repeating-linear-gradient(
+          #eee 0 70px,
+          transparent 70px 135px
+        );
+
+      opacity: 0.7;
+    }
+
+    /* Moving car */
+
+    .race-car {
+      position: absolute;
+
+      z-index: 5;
+
+      bottom: 13%;
+
+      left: -30%;
+
+      width: 280px;
+      height: 100px;
+
+      border-radius:
+        45% 35% 12% 12%;
+
+      background:
+        linear-gradient(
+          160deg,
+          #383a3e,
+          #050505 70%
+        );
+
+      border: 1px solid #5a5c60;
+
+      box-shadow:
+        0 20px 40px #000;
+    }
+
+    .race-car::before {
+      content: "";
+
+      position: absolute;
+
+      left: 27%;
+      top: -42px;
+
+      width: 48%;
+      height: 50px;
+
+      background: #080a0c;
+
+      clip-path:
+        polygon(
+          15% 100%,
+          28% 0,
+          72% 0,
+          85% 100%
+        );
+
+      border: 1px solid #56585c;
+    }
+
+    .tail-light {
+      position: absolute;
+
+      right: 5%;
+      top: 30px;
+
+      width: 55px;
+      height: 10px;
+
+      background: var(--red);
+
+      box-shadow:
+        0 0 25px 8px
+        rgba(255,24,56,0.5);
+    }
+
+    #race.active .race-car {
+      animation:
+        raceDrive 3.5s
+        cubic-bezier(.4,0,.6,1)
+        forwards;
+    }
+
+    @keyframes raceDrive {
+
+      0% {
+        left: -30%;
+        transform: scale(0.75);
+      }
+
+      60% {
+        left: 55%;
+        transform: scale(1.08);
+      }
+
+      100% {
+        left: 110%;
+        transform: scale(1.22);
+      }
+
+    }
+
+    /* =========================
+       BIRTHDAY SCREEN
+    ========================= */
+
+    #birthday {
+      display: none;
+
+      background:
+        radial-gradient(
+          circle at 25% 45%,
+          rgba(255,24,56,0.16),
+          transparent 30%
+        ),
+        #040404;
+    }
+
+    #birthday.active {
+      display: grid;
+    }
+
+    .birthday-content {
+      text-align: center;
+
+      max-width: 850px;
+
+      padding: 30px;
+
+      z-index: 10;
+    }
+
+    .birthday-small {
+      color: #aaa;
+
+      font-size: 11px;
+
+      letter-spacing: 0.45em;
+
+      text-transform: uppercase;
+    }
+
+    .birthday-title {
+      font-size: clamp(
+        50px,
+        12vw,
+        110px
+      );
+
+      line-height: 0.85;
+
+      margin: 20px 0;
+
+      font-style: italic;
+
+      font-weight: 1000;
+
+      text-transform: uppercase;
+    }
+
+    .birthday-title span {
+      color: var(--red);
+    }
+
+    .message {
+      max-width: 650px;
+
+      margin: auto;
+
+      color: #d0d0d4;
+
+      line-height: 1.8;
+
+      font-size: 15px;
+    }
+
+    .signature {
+      margin-top: 25px;
+
+      font-size: 28px;
+
+      font-style: italic;
+    }
+
+    /* =========================
+       CONFETTI
+    ========================= */
+
+    .confetti {
+      position: absolute;
+
+      inset: 0;
+
+      overflow: hidden;
+
+      pointer-events: none;
+    }
+
+    .confetti-piece {
+      position: absolute;
+
+      width: 7px;
+      height: 16px;
+
+      background: var(--red);
+
+      animation:
+        fall 4s linear infinite;
+    }
+
+    .confetti-piece:nth-child(2n) {
+      background: #ddd;
+    }
+
+    .confetti-piece:nth-child(3n) {
+      background: #555;
+    }
+
+    @keyframes fall {
+
+      from {
+        transform:
+          translateY(-20vh)
+          rotate(0deg);
+      }
+
+      to {
+        transform:
+          translateY(120vh)
+          rotate(720deg);
+      }
+
+    }
+
+    /* =========================
+       FINAL SCREEN
+    ========================= */
+
+    #final {
+      display: none;
+
+      background:
+        linear-gradient(
+          #030405,
+          #090b0f
+        );
+    }
+
+    #final.active {
+      display: grid;
+    }
+
+    .final-road {
+      position: absolute;
+
+      inset: 0;
+
+      background:
+        linear-gradient(
+          170deg,
+          transparent 35%,
+          #111820 35% 62%,
+          #030405 62%
+        );
+
+      clip-path:
+        polygon(
+          40% 0,
+          60% 0,
+          100% 100%,
+          0 100%
+        );
+    }
+
+    .final-car {
+      position: absolute;
+
+      bottom: 18%;
+
+      left: 50%;
+
+      transform: translateX(-50%);
+
+      width: 170px;
+      height: 62px;
+
+      border-radius:
+        50% 45% 10% 10%;
+
+      background:
+        linear-gradient(
+          #292d31,
+          #050505
+        );
+
+      box-shadow:
+        0 0 60px
+        rgba(255,24,56,0.15);
+    }
+
+    .final-car::after {
+      content: "";
+
+      position: absolute;
+
+      right: 3%;
+      top: 25px;
+
+      width: 35px;
+      height: 7px;
+
+      background: var(--red);
+
+      box-shadow:
+        0 0 25px 8px
+        rgba(255,24,56,0.55);
+    }
+
+    .final-content {
+      position: relative;
+
+      z-index: 10;
+
+      text-align: center;
+
+      margin-top: -25vh;
+    }
+
+    .final-title {
+      font-size: clamp(
+        35px,
+        8vw,
+        80px
+      );
+
+      font-style: italic;
+
+      text-transform: uppercase;
+
+      line-height: 0.95;
+    }
+
+    .final-title span {
+      color: var(--red);
+    }
+
+    .replay {
+      margin-top: 30px;
+
+      padding: 13px 28px;
+
+      border: 1px solid #555;
+
+      background: #080808;
+
+      color: white;
+
+      cursor: pointer;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.2em;
+
+      font-weight: bold;
+    }
+
+    .footer {
+      position: absolute;
+
+      bottom: 18px;
+
+      left: 0;
+      right: 0;
+
+      text-align: center;
+
+      color: #777;
+
+      font-size: 10px;
+
+      letter-spacing: 0.25em;
+
+      text-transform: uppercase;
+    }
+
+    .footer span {
+      color: var(--red);
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 600px) {
+
+      .car-container {
+        bottom: 5%;
+        height: 230px;
+      }
+
+      .car {
+        width: 86%;
+      }
+
+      .headlight {
+        width: 75px;
+      }
+
+      .grille {
+        height: 42px;
+      }
+
+      .wheel {
+        width: 62px;
+        height: 62px;
+      }
+
+      .wheel.left {
+        left: 9%;
+      }
+
+      .wheel.right {
+        right: 9%;
+      }
+
+      .subtitle {
+        letter-spacing: 0.12em;
+      }
+
+      .engine-button {
+        width: 125px;
+        height: 125px;
+      }
+
+    }
+  </style>
 </head>
-<body class="theme">
-  <div class="container">
-    <header>
-      <h1>Birthday Race</h1>
-    </header>
 
-    <main>
-      <div id="track" class="track" aria-hidden="false">
-        <div id="car" class="car" aria-hidden="true">
-          <!-- Simple SVG racing car -->
-          <svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="g1" x1="0" x2="1">
-                <stop offset="0" stop-color="#ff3b3b"/>
-                <stop offset="1" stop-color="#a70000"/>
-              </linearGradient>
-              <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000" flood-opacity="0.45"/>
-              </filter>
-            </defs>
-            <g filter="url(#shadow)">
-              <rect x="10" y="25" rx="12" ry="12" width="160" height="30" fill="url(#g1)"/>
-              <path d="M40 25 q20 -20 60 -12 l28 12" fill="#8b0000"/>
-              <circle cx="55" cy="58" r="8" fill="#111"/>
-              <circle cx="145" cy="58" r="8" fill="#111"/>
-              <circle cx="55" cy="58" r="4" fill="#b9b9b9"/>
-              <circle cx="145" cy="58" r="4" fill="#b9b9b9"/>
-            </g>
-          </svg>
-        </div>
+<body>
 
-        <div id="motion-lines" class="motion-lines" aria-hidden="true"></div>
+  <!-- =====================================
+       INTRO
+  ====================================== -->
+
+  <section class="screen" id="hero">
+
+    <div class="road"></div>
+    <div class="red-line"></div>
+
+    <div class="hero-content">
+
+      <div class="kicker">
+        A Special Mission • 2026
       </div>
 
-      <div id="controls" class="controls">
-        <button id="startBtn" class="btn primary">START ENGINE</button>
-        <button id="replayBtn" class="btn" hidden>Replay 🔄</button>
+      <h1 class="hero-title">
+        Ready for your
+        <span>Birthday Surprise?</span>
+      </h1>
+
+      <p class="subtitle">
+        Turn the sound on • Start the engine • Enjoy the ride
+      </p>
+
+      <button
+        class="engine-button"
+        id="startButton"
+      >
+        Start<br>
+        Engine
+      </button>
+
+    </div>
+
+    <!-- Luxury performance car -->
+
+    <div class="car-container">
+
+      <div class="car">
+
+        <div class="headlight left"></div>
+        <div class="headlight right"></div>
+
+        <div class="grille"></div>
+
+        <div class="wheel left"></div>
+        <div class="wheel right"></div>
+
       </div>
 
-      <div id="overlay" class="overlay hidden">
-        <div id="birthdayMsg" class="birthday-msg">
-          <div class="sparkles">🎉</div>
-          <h2 id="hbText">HAPPY BIRTHDAY!</h2>
-        </div>
+    </div>
+
+  </section>
+
+
+  <!-- =====================================
+       RACING
+  ====================================== -->
+
+  <section class="screen" id="race">
+
+    <div class="speed" id="speed">
+      000 KM/H
+    </div>
+
+    <div class="track"></div>
+
+    <div class="race-title">
+
+      THIS RIDE IS
+
+      <br>
+
+      <span>
+        JUST GETTING STARTED...
+      </span>
+
+    </div>
+
+    <div class="race-car">
+
+      <div class="tail-light"></div>
+
+      <div class="wheel left"></div>
+      <div class="wheel right"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================
+       BIRTHDAY
+  ====================================== -->
+
+  <section class="screen" id="birthday">
+
+    <div
+      class="confetti"
+      id="confetti"
+    ></div>
+
+    <div class="birthday-content">
+
+      <div class="birthday-small">
+        Tonight's Main Event
       </div>
 
-      <div id="countdown" class="countdown hidden" aria-live="polite">02:00</div>
+      <h2 class="birthday-title">
 
-      <div id="finalMsg" class="final-msg hidden">You crossed the finish line — Happy Birthday! 🏁</div>
-    </main>
+        Happy
 
-    <footer>
-      <small>Black & Red racing theme • Click START to enable sound (required by browsers)</small>
-    </footer>
-  </div>
+        <br>
 
-  <!-- confetti lib -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <script src="app.js"></script>
+        <span>Birthday!</span>
+
+      </h2>
+
+      <p class="message">
+
+        Wishing you a year full of
+        <b>speed, success, adventures</b>
+        and unforgettable moments.
+
+        <br><br>
+
+        May every new chapter be
+        bigger, bolder and better
+        than the last.
+
+      </p>
+
+      <div class="signature">
+        — For a true champion 🏁
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================
+       FINAL
+  ====================================== -->
+
+  <section class="screen" id="final">
+
+    <div class="final-road"></div>
+
+    <div class="final-car"></div>
+
+    <div class="final-content">
+
+      <div class="birthday-small">
+        Keep Driving Forward
+      </div>
+
+      <h3 class="final-title">
+
+        Your Best Lap
+
+        <br>
+
+        <span>Is Yet To Come.</span>
+
+      </h3>
+
+      <button
+        class="replay"
+        id="replayButton"
+      >
+        ↻ &nbsp; Replay
+      </button>
+
+    </div>
+
+    <div class="footer">
+
+      Buckle up for an
+      <span>incredible</span>
+      year ahead! 🏁
+
+    </div>
+
+  </section>
+
+
+  <script>
+
+    /*
+      ====================================
+      BASIC PAGE CONTROL
+      ====================================
+    */
+
+    const hero =
+      document.getElementById("hero");
+
+    const race =
+      document.getElementById("race");
+
+    const birthday =
+      document.getElementById("birthday");
+
+    const finalScreen =
+      document.getElementById("final");
+
+    const startButton =
+      document.getElementById("startButton");
+
+    const replayButton =
+      document.getElementById("replayButton");
+
+    const speed =
+      document.getElementById("speed");
+
+    const confetti =
+      document.getElementById("confetti");
+
+
+    /*
+      ====================================
+      ENGINE SOUND
+      ====================================
+    */
+
+    function playEngineSound() {
+
+      try {
+
+        const AudioContext =
+          window.AudioContext ||
+          window.webkitAudioContext;
+
+        const audio =
+          new AudioContext();
+
+        const oscillator =
+          audio.createOscillator();
+
+        const gain =
+          audio.createGain();
+
+        oscillator.type = "sawtooth";
+
+        oscillator.frequency.setValueAtTime(
+          70,
+          audio.currentTime
+        );
+
+        gain.gain.setValueAtTime(
+          0.0001,
+          audio.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+          0.12,
+          audio.currentTime + 0.2
+        );
+
+        oscillator.frequency.exponentialRampToValueAtTime(
+          210,
+          audio.currentTime + 2
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+          0.0001,
+          audio.currentTime + 3
+        );
+
+        oscillator.connect(gain);
+
+        gain.connect(audio.destination);
+
+        oscillator.start();
+
+        oscillator.stop(
+          audio.currentTime + 3.1
+        );
+
+      } catch (error) {
+
+        console.log(
+          "Audio not supported."
+        );
+
+      }
+
+    }
+
+
+    /*
+      ====================================
+      CONFETTI
+      ====================================
+    */
+
+    function createConfetti() {
+
+      confetti.innerHTML = "";
+
+      for (
+        let i = 0;
+        i < 70;
+        i++
+      ) {
+
+        const piece =
+          document.createElement("div");
+
+        piece.className =
+          "confetti-piece";
+
+        piece.style.left =
+          Math.random() * 100 + "%";
+
+        piece.style.top =
+          -Math.random() * 100 + "%";
+
+        piece.style.animationDelay =
+          Math.random() * 2 + "s";
+
+        piece.style.animationDuration =
+          3 + Math.random() * 3 + "s";
+
+        confetti.appendChild(piece);
+
+      }
+
+    }
+
+
+    /*
+      ====================================
+      START EXPERIENCE
+      ====================================
+    */
+
+    let started = false;
+
+    startButton.addEventListener(
+      "click",
+      function () {
+
+        if (started) return;
+
+        started = true;
+
+        playEngineSound();
+
+        /*
+          Hide intro
+        */
+
+        hero.style.display = "none";
+
+        /*
+          Show racing
+        */
+
+        race.classList.add("active");
+
+        /*
+          Speed animation
+        */
+
+        let currentSpeed = 0;
+
+        const speedTimer =
+          setInterval(function () {
+
+            currentSpeed +=
+              Math.floor(
+                Math.random() * 25
+              ) + 18;
+
+            if (currentSpeed >= 287) {
+
+              currentSpeed = 287;
+
+              clearInterval(
+                speedTimer
+              );
+
+            }
+
+            speed.textContent =
+              String(currentSpeed)
+                .padStart(3, "0")
+              + " KM/H";
+
+          }, 120);
+
+
+        /*
+          Birthday reveal
+        */
+
+        setTimeout(
+          function () {
+
+            race.classList.remove(
+              "active"
+            );
+
+            birthday.style.display =
+              "grid";
+
+            createConfetti();
+
+          },
+          3800
+        );
+
+
+        /*
+          Final screen
+        */
+
+        setTimeout(
+          function () {
+
+            birthday.style.display =
+              "none";
+
+            finalScreen.style.display =
+              "grid";
+
+          },
+          7600
+        );
+
+      }
+    );
+
+
+    /*
+      ====================================
+      REPLAY
+      ====================================
+    */
+
+    replayButton.addEventListener(
+      "click",
+      function () {
+
+        location.reload();
+
+      }
+    );
+
+  </script>
+
 </body>
 </html>
